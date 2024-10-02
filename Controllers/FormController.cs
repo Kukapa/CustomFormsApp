@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using CustomFormsApp.Models;
+using Microsoft.AspNetCore.Mvc;
 
 namespace CustomFormsApp.Controllers
 {
@@ -10,16 +11,19 @@ namespace CustomFormsApp.Controllers
         }
 
         [HttpPost]
-        public IActionResult Submit(string name, string email)
+        public IActionResult Submit(FormModel model)
         {
-            if (!ModelState.IsValid)
+            if (ModelState.IsValid)
             {
-                return View("Index");
+                return RedirectToAction("Result", model);
             }
 
-            ViewData["Name"] = name;
-            ViewData["Email"] = email;
-            return View("Result");
+            return View("Index", model);
+        }
+
+        public IActionResult Result(FormModel model)
+        {
+            return View(model);
         }
     }
 }
