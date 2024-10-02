@@ -12,6 +12,11 @@ namespace CustomFormsApp.Controllers
         [HttpPost]
         public IActionResult Submit(string name, string email)
         {
+            if (!ModelState.IsValid)
+            {
+                return View("Index");
+            }
+
             ViewData["Name"] = name;
             ViewData["Email"] = email;
             return View("Result");
