@@ -4,8 +4,9 @@
 
 <h2>Form Submission Result</h2>
 
-<p>Thank you for submitting your information!</p>
-<p><strong>Name:</strong> @ViewData["Name"]</p>
-<p><strong>Email:</strong> @ViewData["Email"]</p>
+<div>
+    <p><strong>Name:</strong> @ViewData["Name"]</p>
+    <p><strong>Email:</strong> @ViewData["Email"]</p>
+</div>
 
-<a asp-controller="Form" asp-action="Index">Back to the form</a>
+<a class="btn btn-primary" asp-controller="Form" asp-action="Index">Back to the form</a>

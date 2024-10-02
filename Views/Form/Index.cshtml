@@ -1,4 +1,6 @@
-﻿@{
+﻿@model CustomFormsApp.Models.FormModel
+
+@{
     ViewData["Title"] = "Submit a Form";
 }
 
@@ -6,12 +8,20 @@
 
 <form asp-controller="Form" asp-action="Submit" method="post">
     <div>
-        <label for="name">Name:</label>
-        <input type="text" id="name" name="name" required />
+        <label asp-for="Name"></label>
+        <input asp-for="Name" />
+        <span asp-validation-for="Name" class="text-danger"></span>
     </div>
     <div>
-        <label for="email">Email:</label>
-        <input type="email" id="email" name="email" required />
+        <label asp-for="Email"></label>
+        <input asp-for="Email" />
+        <span asp-validation-for="Email" class="text-danger"></span>
     </div>
     <button type="submit">Submit</button>
 </form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
