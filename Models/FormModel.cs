@@ -6,9 +6,8 @@ namespace CustomFormsApp.Models
     public class FormModel
     {
         [Key]
-        public int FormId { get; set; } // This serves as the primary key
+        public int FormId { get; set; } 
 
-        // User inputs with validation attributes
         [Required(ErrorMessage = "Name is required")]
         public string Name { get; set; }
 
@@ -19,8 +18,8 @@ namespace CustomFormsApp.Models
         [Required(ErrorMessage = "Message is required")]
         public string Message { get; set; }
 
-        public int TemplateId { get; set; } // Assuming this is needed to link forms to templates
-        public string? UserId { get; set; } // Assuming this is for tracking the user
-        public DateTime DateFilled { get; set; } // Date of form submission
+        public int TemplateId { get; set; }
+        public string? UserId { get; set; }
+        public DateTime DateFilled { get; set; }
     }
 }

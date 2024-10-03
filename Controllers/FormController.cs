@@ -13,7 +13,7 @@ namespace CustomFormsApp.Controllers
 
         public FormController(UserManager<IdentityUser> userManager, ApplicationDbContext context)
         {
-            _userManager = userManager; // Add this line
+            _userManager = userManager;
             _context = context;
         }
 
