@@ -1,32 +1,56 @@
 ﻿@model CustomFormsApp.Models.FormModel
+
 @{
     ViewData["Title"] = "Submit a Form";
 }
 
-<h2>Submit a Form</h2>
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["SuccessMessage"]
+    </div>
+}
 
-<form asp-action="Submit" method="post" class="form-horizontal">
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["ErrorMessage"]
+    </div>
+}
+
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="alert alert-danger">
+        <ul>
+            @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+            {
+                <li>@error.ErrorMessage</li>
+            }
+        </ul>
+    </div>
+}
+
+
+<form asp-action="Submit" method="post">
     <div class="form-group">
-        <label asp-for="Name" class="control-label"></label>
+        <label asp-for="Name"></label>
         <input asp-for="Name" class="form-control" />
         <span asp-validation-for="Name" class="text-danger"></span>
     </div>
 
     <div class="form-group">
-        <label asp-for="Email" class="control-label"></label>
+        <label asp-for="Email"></label>
         <input asp-for="Email" class="form-control" />
         <span asp-validation-for="Email" class="text-danger"></span>
     </div>
 
     <div class="form-group">
-        <label asp-for="Message" class="control-label"></label>
+        <label asp-for="Message"></label>
         <textarea asp-for="Message" class="form-control"></textarea>
         <span asp-validation-for="Message" class="text-danger"></span>
     </div>
 
-    <div class="form-group">
-        <input type="submit" value="Submit" class="btn btn-primary" />
-    </div>
+    <button type="submit" class="btn btn-primary">Submit</button>
 </form>
 
 @section Scripts {
