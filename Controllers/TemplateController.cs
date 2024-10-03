@@ -16,7 +16,6 @@ namespace CustomFormsApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                // Logic to save the template (this will be done using EF later)
                 TempData["SuccessMessage"] = "Template created successfully!";
                 return RedirectToAction("Index", "Home");
             }

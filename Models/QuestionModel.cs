@@ -13,8 +13,8 @@ namespace CustomFormsApp.Models
         public string Description { get; set; }
 
         [Required(ErrorMessage = "Please select the type of the question.")]
-        public string QuestionType { get; set; } // Single-line, multi-line, integer, checkbox
+        public string QuestionType { get; set; }
 
-        public bool IsVisibleInResults { get; set; } = true; // Can be toggled by the user
+        public bool IsVisibleInResults { get; set; } = true;
     }
 }
