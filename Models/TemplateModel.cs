@@ -13,10 +13,13 @@ namespace CustomFormsApp.Models
         [Required(ErrorMessage = "Description is required.")]
         public string Description { get; set; }
 
+        [Required(ErrorMessage = "Tags are required")]
         public string Tags { get; set; }
 
         public bool IsPublic { get; set; }
 
         public List<QuestionModel> Questions { get; set; } = new List<QuestionModel>();
+
+        public string OwnerUserId { get; set; }
     }
 }
