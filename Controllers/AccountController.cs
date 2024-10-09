@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using CustomFormsApp.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CustomFormsApp.Controllers
 {
@@ -9,13 +10,11 @@ namespace CustomFormsApp.Controllers
     {
         private readonly UserManager<IdentityUser> _userManager;
         private readonly SignInManager<IdentityUser> _signInManager;
-        private readonly ILogger<AccountController> _logger;
 
-        public AccountController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, ILogger<AccountController> logger)
+        public AccountController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager)
         {
             _userManager = userManager;
             _signInManager = signInManager;
-            _logger = logger;
         }
 
         [HttpGet]
@@ -47,28 +46,28 @@ namespace CustomFormsApp.Controllers
         public IActionResult Login() => View();
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        [AllowAnonymous]
         public async Task<IActionResult> Login(LoginViewModel model)
         {
-            if (ModelState.IsValid)
+
+            if (!ModelState.IsValid)
             {
-                var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, isPersistent: false, lockoutOnFailure: false);
-
-                if (result.Succeeded)
-                {
-                    _logger.LogInformation("User logged in with email: {Email}", model.Email);
-                    return RedirectToAction("Index", "Home");
-                }
-                else
-                {
-                    ModelState.AddModelError(string.Empty, "Invalid login attempt.");
-                    _logger.LogWarning("Invalid login attempt for email: {Email}", model.Email);
-                }
+                return View(model);
             }
-            return View(model);
+
+            var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, isPersistent: false, lockoutOnFailure: false);
+
+            if (result.Succeeded)
+            {
+                var user = await _userManager.FindByEmailAsync(model.Email);
+                return RedirectToAction("Index", "Home");
+            }
+            else
+            {
+                ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+                return View(model);
+            }
         }
-
-
 
         [HttpPost]
         [ValidateAntiForgeryToken]
