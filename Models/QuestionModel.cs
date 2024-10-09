@@ -16,5 +16,7 @@ namespace CustomFormsApp.Models
         public string QuestionType { get; set; }
 
         public bool IsVisibleInResults { get; set; } = true;
+
+        public TemplateModel Template { get; set; }
     }
 }
