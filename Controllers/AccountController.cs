@@ -17,6 +17,13 @@ namespace CustomFormsApp.Controllers
             _signInManager = signInManager;
         }
 
+        [AllowAnonymous]
+        public IActionResult AccessDenied(string returnUrl = null)
+        {
+            ViewData["ReturnUrl"] = returnUrl;
+            return View();
+        }
+
         [HttpGet]
         public IActionResult Register() => View();
 
