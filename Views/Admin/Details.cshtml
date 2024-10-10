@@ -1,0 +1,11 @@
+﻿@model Microsoft.AspNetCore.Identity.IdentityUser
+
+<h2>User Details</h2>
+
+<div>
+    <h4>Email: @Model.Email</h4>
+    <p>Id: @Model.Id</p>
+    <p>Lockout Enabled: @Model.LockoutEnabled</p>
+</div>
+
+<a asp-action="Index" class="btn btn-primary">Back to Users</a>

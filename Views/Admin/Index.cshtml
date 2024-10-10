@@ -1,0 +1,30 @@
+﻿@model IEnumerable<CustomFormsApp.Models.UserRoleViewModel>
+
+<h2>Admin User Management</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Email</th>
+            <th>Roles</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var userRole in Model)
+        {
+            <tr>
+                <td>@userRole.User.Email</td>
+                <td>@string.Join(", ", userRole.Roles)</td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@userRole.User.Id" class="btn btn-info">Details</a>
+                    <a asp-action="Block" asp-route-id="@userRole.User.Id" class="btn btn-warning">Block</a>
+                    <a asp-action="Unblock" asp-route-id="@userRole.User.Id" class="btn btn-success">Unblock</a>
+                    <a asp-action="Delete" asp-route-id="@userRole.User.Id" class="btn btn-danger">Delete</a>
+                    <a asp-action="AddToAdmin" asp-route-id="@userRole.User.Id" class="btn btn-secondary">Add to Admin</a>
+                    <a asp-action="RemoveFromAdmin" asp-route-id="@userRole.User.Id" class="btn btn-secondary">Remove Admin</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
