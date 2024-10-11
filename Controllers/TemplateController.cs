@@ -20,13 +20,13 @@ namespace CustomFormsApp.Controllers
             _userManager = userManager;
         }
 
+        [Authorize(Roles = "Admin, User")]
         [HttpGet]
         public IActionResult Create()
         {
             return View();
         }
 
-        [Authorize]
         [HttpPost]
         public async Task<IActionResult> Create(TemplateModel model)
         {
@@ -59,6 +59,7 @@ namespace CustomFormsApp.Controllers
             return RedirectToAction("Index");
         }
 
+        [Authorize(Roles = "Admin, User")]
         [HttpGet]
         public IActionResult Index()
         {
@@ -71,6 +72,7 @@ namespace CustomFormsApp.Controllers
             return _context.Templates.Any(e => e.Id == id);
         }
 
+        [Authorize(Roles = "Admin, User")]
         [HttpGet]
         public IActionResult Edit(int id)
         {
@@ -80,6 +82,10 @@ namespace CustomFormsApp.Controllers
             {
                 return NotFound();
             }
+
+            var currentUserId = _userManager.GetUserId(User);
+            if (template.OwnerUserId != currentUserId && !User.IsInRole("Admin")) return Forbid();
+
             return View(template);
         }
 
@@ -123,8 +129,8 @@ namespace CustomFormsApp.Controllers
             return View(templateModel);
         }
 
+        [Authorize(Roles = "Admin, User")]
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int id)
         {
             var template = await _context.Templates.FindAsync(id);
@@ -132,6 +138,9 @@ namespace CustomFormsApp.Controllers
             {
                 return NotFound();
             }
+
+            var currentUserId = _userManager.GetUserId(User);
+            if (template.OwnerUserId != currentUserId && !User.IsInRole("Admin")) return Forbid();
 
             _context.Templates.Remove(template);
             await _context.SaveChangesAsync();
