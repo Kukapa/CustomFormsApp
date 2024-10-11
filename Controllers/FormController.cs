@@ -18,20 +18,34 @@ namespace CustomFormsApp.Controllers
         }
 
         [HttpGet]
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View(new FormModel());
+            var userId = _userManager.GetUserId(User);
+
+            List<FormModel> forms;
+            if (User.IsInRole("Admin"))
+            {
+                forms = await _context.Forms.ToListAsync();
+            }
+            else
+            {
+                forms = await _context.Forms.Where(f => f.UserId == userId).ToListAsync();
+            }
+
+            return View(forms);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Submit(FormModel model)
+        public async Task<IActionResult> Submit(FormModel model)
         {
             if (ModelState.IsValid)
             {
                 var userId = _userManager.GetUserId(User);
                 model.UserId = userId;
+                model.DateFilled = DateTime.UtcNow;
                 _context.Forms.Add(model);
+                await _context.SaveChangesAsync();
 
                 TempData["SuccessMessage"] = "Form submitted successfully.";
                 return RedirectToAction("Index");
@@ -44,9 +58,42 @@ namespace CustomFormsApp.Controllers
         }
 
         [HttpGet]
-        public IActionResult Result(FormModel model) 
+        public async Task<IActionResult> Edit(int id)
         {
+            var form = await _context.Forms.FindAsync(id);
+            if (form == null || (form.UserId != _userManager.GetUserId(User) && !User.IsInRole("Admin")))
+            {
+                return Forbid();
+            }
+            return View(form);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(FormModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                _context.Forms.Update(model);
+                await _context.SaveChangesAsync();
+                return RedirectToAction("Index");
+            }
             return View(model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var form = await _context.Forms.FindAsync(id);
+            if (form == null || (form.UserId != _userManager.GetUserId(User) && !User.IsInRole("Admin")))
+            {
+                return Forbid();
+            }
+
+            _context.Forms.Remove(form);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("Index");
         }
     }
 }

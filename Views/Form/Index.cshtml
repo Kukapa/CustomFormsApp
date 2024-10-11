@@ -1,58 +1,37 @@
-﻿@model CustomFormsApp.Models.FormModel
+﻿@model IEnumerable<CustomFormsApp.Models.FormModel>
 
-@{
-    ViewData["Title"] = "Submit a Form";
-}
+<h2>Form Submissions</h2>
 
-@if (TempData["SuccessMessage"] != null)
+@if (Model != null && Model.Any())
 {
-    <div class="alert alert-success">
-        @TempData["SuccessMessage"]
-    </div>
-}
-
-@if (TempData["ErrorMessage"] != null)
-{
-    <div class="alert alert-danger">
-        @TempData["ErrorMessage"]
-    </div>
-}
-
-@if (!ViewData.ModelState.IsValid)
-{
-    <div class="alert alert-danger">
-        <ul>
-            @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Message</th>
+                <th>Date</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var form in Model)
             {
-                <li>@error.ErrorMessage</li>
+                <tr>
+                    <td>@form.Name</td>
+                    <td>@form.Email</td>
+                    <td>@form.Message</td>
+                    <td>@form.DateFilled.ToString("yyyy-MM-dd")</td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@form.FormId" class="btn btn-primary">Edit</a>
+                        <a asp-action="Delete" asp-route-id="@form.FormId" class="btn btn-danger">Delete</a>
+                    </td>
+                </tr>
             }
-        </ul>
-    </div>
+        </tbody>
+    </table>
 }
-
-
-<form asp-action="Submit" method="post">
-    <div class="form-group">
-        <label asp-for="Name"></label>
-        <input asp-for="Name" class="form-control" />
-        <span asp-validation-for="Name" class="text-danger"></span>
-    </div>
-
-    <div class="form-group">
-        <label asp-for="Email"></label>
-        <input asp-for="Email" class="form-control" />
-        <span asp-validation-for="Email" class="text-danger"></span>
-    </div>
-
-    <div class="form-group">
-        <label asp-for="Message"></label>
-        <textarea asp-for="Message" class="form-control"></textarea>
-        <span asp-validation-for="Message" class="text-danger"></span>
-    </div>
-
-    <button type="submit" class="btn btn-primary">Submit</button>
-</form>
-
-@section Scripts {
-    <partial name="_ValidationScriptsPartial" />
+else
+{
+    <p>No forms found.</p>
 }

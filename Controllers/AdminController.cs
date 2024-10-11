@@ -61,7 +61,7 @@ namespace CustomFormsApp.Controllers
             var user = await _userManager.FindByIdAsync(id);
             if (user != null)
             {
-                user.LockoutEnabled = false; // Disable locking out the user
+                user.LockoutEnabled = false;
                 await _userManager.UpdateAsync(user);
             }
             return RedirectToAction("Index");
