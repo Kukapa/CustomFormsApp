@@ -21,8 +21,8 @@ namespace CustomFormsApp.Controllers
         public async Task<IActionResult> Index()
         {
             var userId = _userManager.GetUserId(User);
-
             List<FormModel> forms;
+
             if (User.IsInRole("Admin"))
             {
                 forms = await _context.Forms.ToListAsync();
@@ -94,6 +94,75 @@ namespace CustomFormsApp.Controllers
             await _context.SaveChangesAsync();
 
             return RedirectToAction("Index");
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Answer(int templateId)
+        {
+            var questions = await _context.Questions
+                .Where(q => q.TemplateId == templateId)
+                .ToListAsync();
+
+            return View(questions);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SubmitAnswers(List<int> QuestionIds, Dictionary<int, string> Answers)
+        {
+            var userId = _userManager.GetUserId(User);
+
+            foreach (var questionId in QuestionIds)
+            {
+                var question = await _context.Questions.FindAsync(questionId);
+
+                if (question == null)
+                {
+                    continue;
+                }
+
+                var answer = new AnswerModel
+                {
+                    QuestionId = questionId,
+                    UserId = userId,
+                    SubmittedAt = DateTime.UtcNow
+                };
+
+                if (question.QuestionType == "SingleLineString" || question.QuestionType == "MultiLineText")
+                {
+                    answer.AnswerText = Answers[questionId];
+                }
+                else if (question.QuestionType == "PositiveInteger" && int.TryParse(Answers[questionId], out int integerAnswer))
+                {
+                    answer.AnswerInteger = integerAnswer;
+                }
+                else if (question.QuestionType == "Checkbox")
+                {
+                    answer.AnswerBoolean = Answers.ContainsKey(questionId) && Answers[questionId] == "true";
+                }
+
+                _context.Answers.Add(answer);
+            }
+
+            await _context.SaveChangesAsync();
+
+            var templateId = _context.Questions
+                .Where(q => QuestionIds.Contains(q.Id))
+                .Select(q => q.TemplateId)
+                .FirstOrDefault();
+
+            return RedirectToAction("Result", "Form", new { templateId });
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Result(int templateId)
+        {
+            var results = await _context.Answers
+                .Where(a => a.Question.TemplateId == templateId)
+                .Include(a => a.Question)
+                .ToListAsync();
+
+            return View(results);
         }
     }
 }
