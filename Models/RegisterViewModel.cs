@@ -5,7 +5,7 @@ namespace CustomFormsApp.Models
     public class RegisterViewModel
     {
         [Required(ErrorMessage = "Username is required")]
-        public string Username { get; set; }
+        public string UserName { get; set; }
 
         [Required(ErrorMessage = "Email is required")]
         [EmailAddress(ErrorMessage = "Invalid Email Address")]
