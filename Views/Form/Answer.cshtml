@@ -1,0 +1,31 @@
+﻿@model List<CustomFormsApp.Models.QuestionModel>
+
+<h2>Answer the Questions</h2>
+
+<form asp-action="SubmitAnswers" method="post">
+    @foreach (var question in Model)
+    {
+        <div class="form-group">
+            <label>@question.Title</label>
+            <input type="hidden" name="QuestionIds" value="@question.Id" />
+
+            @if (question.QuestionType == "SingleLineString")
+            {
+                <input type="text" name="Answers[@question.Id]" class="form-control" />
+            }
+            else if (question.QuestionType == "MultiLineText")
+            {
+                <textarea name="Answers[@question.Id]" class="form-control"></textarea>
+            }
+            else if (question.QuestionType == "PositiveInteger")
+            {
+                <input type="number" name="Answers[@question.Id]" class="form-control" />
+            }
+            else if (question.QuestionType == "Checkbox")
+            {
+                <input type="checkbox" name="Answers[@question.Id]" value="true" class="form-check-input" />
+            }
+        </div>
+    }
+    <button type="submit" class="btn btn-primary">Submit Answers</button>
+</form>

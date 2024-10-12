@@ -1,0 +1,22 @@
+﻿@model List<CustomFormsApp.Models.AnswerModel>
+
+<h2>Submitted Answers</h2>
+
+@foreach (var answer in Model)
+{
+    <div>
+        <strong>@answer.Question.Title</strong><br />
+        @if (answer.Question.QuestionType == "SingleLineString" || answer.Question.QuestionType == "MultiLineText")
+        {
+            <p>@answer.AnswerText</p>
+        }
+        else if (answer.Question.QuestionType == "PositiveInteger")
+        {
+            <p>@answer.AnswerInteger</p>
+        }
+        else if (answer.Question.QuestionType == "Checkbox")
+        {
+            <p>@(answer.AnswerBoolean == true ? "Checked" : "Not Checked")</p>
+        }
+    </div>
+}

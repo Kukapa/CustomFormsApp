@@ -1,14 +1,51 @@
-﻿@model CustomFormsApp.Models.FormModel
+﻿@model List<CustomFormsApp.Models.AnswerModel>
+
 @{
-    ViewData["Title"] = "Form Submission Result";
+    ViewData["Title"] = "View Answers";
 }
 
-<h2>Form Submission Result</h2>
+<h1>View Answers</h1>
 
-<div>
-    <p><strong>Name:</strong> @Model.Name</p>
-    <p><strong>Email:</strong> @Model.Email</p>
-    <p><strong>Message:</strong> @Model.Message</p>
-</div>
-
-<a asp-action="Index" class="btn btn-primary">Submit Another Form</a>
+@if (Model != null && Model.Any())
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Question</th>
+                <th>Your Answer</th>
+                <th>Submitted At</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var answer in Model)
+            {
+                <tr>
+                    <td>@answer.Question.Title</td>
+                    <td>
+                        @if (!string.IsNullOrEmpty(answer.AnswerText))
+                        {
+                            @answer.AnswerText
+                        }
+                        else if (answer.AnswerInteger.HasValue)
+                        {
+                            @answer.AnswerInteger.Value
+                        }
+                        else if (answer.AnswerBoolean.HasValue)
+                        {
+                            @answer.AnswerBoolean.Value
+                        }
+                        else
+                        {
+                            <text>No Answer Provided</text>
+                        }
+                    </td>
+                    <td>@answer.SubmittedAt.ToString("g")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>No answers submitted yet.</p>
+}
