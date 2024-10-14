@@ -40,13 +40,11 @@ namespace CustomFormsApp.Controllers
 
                 if (result.Succeeded)
                 {
-                    // Ensure the "User" role exists
                     if (!await _roleManager.RoleExistsAsync("User"))
                     {
                         await _roleManager.CreateAsync(new IdentityRole("User"));
                     }
 
-                    // Assign the "User" role to the newly registered user
                     await _userManager.AddToRoleAsync(user, "User");
 
                     await _signInManager.SignInAsync(user, isPersistent: false);
@@ -69,17 +67,22 @@ namespace CustomFormsApp.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> Login(LoginViewModel model)
         {
-
             if (!ModelState.IsValid)
             {
                 return View(model);
             }
 
-            var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, isPersistent: false, lockoutOnFailure: false);
+            var user = await _userManager.FindByEmailAsync(model.Email);
+            if (user == null)
+            {
+                ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+                return View(model);
+            }
+
+            var result = await _signInManager.PasswordSignInAsync(user.UserName, model.Password, isPersistent: false, lockoutOnFailure: false);
 
             if (result.Succeeded)
             {
-                var user = await _userManager.FindByEmailAsync(model.Email);
                 return RedirectToAction("Index", "Home");
             }
             else
@@ -94,7 +97,7 @@ namespace CustomFormsApp.Controllers
         public async Task<IActionResult> Logout()
         {
             await _signInManager.SignOutAsync();
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Login", "Account");
         }
     }
 }
