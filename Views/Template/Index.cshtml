@@ -1,4 +1,6 @@
 ﻿@model IEnumerable<TemplateModel>
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<IdentityUser> UserManager
 
 <h2>Templates</h2>
 
@@ -21,11 +23,19 @@
                 <td>@template.Description</td>
                 <td>@template.Tags</td>
                 <td>
-                    <a asp-action="Edit" asp-route-id="@template.Id" class="btn btn-primary">Edit</a>
-                    <form asp-action="Delete" asp-route-id="@template.Id" method="post" style="display:inline;">
-                        <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this template?');">Delete</button>
-                        @Html.AntiForgeryToken()
-                    </form>
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        var currentUserId = UserManager.GetUserId(User);
+
+                        @if (User.IsInRole("Admin") || template.OwnerUserId == currentUserId)
+                        {
+                            <a asp-action="Edit" asp-route-id="@template.Id" class="btn btn-primary">Edit</a>
+                            <form asp-action="Delete" asp-route-id="@template.Id" method="post" style="display:inline;">
+                                <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this template?');">Delete</button>
+                                @Html.AntiForgeryToken()
+                            </form>
+                        }
+                    }
                 </td>
             </tr>
         }
