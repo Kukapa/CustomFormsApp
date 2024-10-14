@@ -13,12 +13,12 @@ namespace CustomFormsApp.Controllers
     public class AdminController : Controller
     {
         private readonly UserManager<IdentityUser> _userManager;
-        private readonly ApplicationDbContext _context;
+        private readonly SignInManager<IdentityUser> _signInManager;
 
-        public AdminController(UserManager<IdentityUser> userManager, ApplicationDbContext context)
+        public AdminController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager)
         {
             _userManager = userManager;
-            _context = context;
+            _signInManager = signInManager;
         }
 
         public IActionResult Index()
@@ -92,7 +92,16 @@ namespace CustomFormsApp.Controllers
             var user = await _userManager.FindByIdAsync(id);
             if (user != null)
             {
-                await _userManager.RemoveFromRoleAsync(user, "Admin");
+                var result = await _userManager.RemoveFromRoleAsync(user, "Admin");
+
+                if (result.Succeeded)
+                {
+                    if (user.Id == _userManager.GetUserId(User))
+                    {
+                        await _signInManager.SignOutAsync();
+                        return RedirectToAction("Login", "Account");
+                    }
+                }
             }
             return RedirectToAction("Index");
         }
