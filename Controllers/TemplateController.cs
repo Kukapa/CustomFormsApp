@@ -148,5 +148,33 @@ namespace CustomFormsApp.Controllers
 
             return RedirectToAction(nameof(Index));
         }
+
+        [HttpGet]
+        public async Task<IActionResult> Details(int id)
+        {
+            var template = await _context.Templates
+                .Include(t => t.Questions)
+                .Include(t => t.FilledForms)
+                .FirstOrDefaultAsync(t => t.Id == id);
+
+            if (template == null)
+            {
+                return NotFound();
+            }
+
+            var user = await _userManager.GetUserAsync(User);
+            var isAdmin = User.IsInRole("Admin");
+
+            var canManageTemplate = isAdmin || template.OwnerUserId == user.Id;
+
+            var viewModel = new TemplateDetailsViewModel
+            {
+                Template = template,
+                CanManageTemplate = canManageTemplate,
+                IsAdmin = isAdmin
+            };
+
+            return View(viewModel);
+        }
     }
 }

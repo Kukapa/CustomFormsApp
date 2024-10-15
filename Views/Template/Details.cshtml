@@ -1,0 +1,74 @@
+﻿@model CustomFormsApp.Models.TemplateDetailsViewModel
+
+@{
+    ViewData["Title"] = "Template Details";
+}
+
+<div class="container mt-4">
+    <h2>@Model.Template.Title</h2>
+
+    <ul class="nav nav-tabs" id="templateDetailsTabs" role="tablist">
+        <li class="nav-item">
+            <a class="nav-link active" id="settings-tab" data-toggle="tab" href="#settings" role="tab" aria-controls="settings" aria-selected="true">Settings</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="questions-tab" data-toggle="tab" href="#questions" role="tab" aria-controls="questions" aria-selected="false">Questions</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="results-tab" data-toggle="tab" href="#results" role="tab" aria-controls="results" aria-selected="false">Results</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="aggregated-tab" data-toggle="tab" href="#aggregated" role="tab" aria-controls="aggregated" aria-selected="false">Aggregated Results</a>
+        </li>
+    </ul>
+
+    <div class="tab-content mt-3" id="templateDetailsContent">
+        <div class="tab-pane fade show active" id="settings" role="tabpanel" aria-labelledby="settings-tab">
+            <h4>Template Settings</h4>
+            <p><strong>Description:</strong> @Model.Template.Description</p>
+            <p><strong>Public:</strong> @(Model.Template.IsPublic ? "Yes" : "No")</p>
+            <p><strong>Tags:</strong> @Model.Template.Tags</p>
+            @if (Model.CanManageTemplate)
+            {
+                <a href="@Url.Action("Edit", "Template", new { id = Model.Template.Id })" class="btn btn-primary">Edit Template</a>
+            }
+        </div>
+
+        <div class="tab-pane fade" id="questions" role="tabpanel" aria-labelledby="questions-tab">
+            <h4>Questions</h4>
+            @if (Model.CanManageTemplate)
+            {
+                <a href="@Url.Action("AddQuestion", "Template", new { templateId = Model.Template.Id })" class="btn btn-secondary">Add Question</a>
+            }
+            <ul class="list-group mt-3">
+                @foreach (var question in Model.Template.Questions)
+                {
+                    <li class="list-group-item">
+                        <strong>@question.Title:</strong> @question.Description
+                        @if (Model.CanManageTemplate)
+                        {
+                            <a href="@Url.Action("EditQuestion", "Template", new { questionId = question.Id })" class="btn btn-sm btn-warning">Edit</a>
+                            <a href="@Url.Action("DeleteQuestion", "Template", new { questionId = question.Id })" class="btn btn-sm btn-danger">Delete</a>
+                        }
+                    </li>
+                }
+            </ul>
+        </div>
+
+        <div class="tab-pane fade" id="results" role="tabpanel" aria-labelledby="results-tab">
+            <h4>Filled Forms</h4>
+            <ul class="list-group mt-3">
+                @foreach (var form in Model.Template.FilledForms)
+                {
+                    <li class="list-group-item">
+                        <a href="@Url.Action("ViewForm", "Form", new { formId = form.Id })">Form filled on @form.DateFilled</a>
+                    </li>
+                }
+            </ul>
+        </div>
+
+        <div class="tab-pane fade" id="aggregated" role="tabpanel" aria-labelledby="aggregated-tab">
+            <h4>Aggregated Results</h4>
+        </div>
+    </div>
+</div>
