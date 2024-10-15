@@ -23,6 +23,7 @@
                 <td>@template.Description</td>
                 <td>@template.Tags</td>
                 <td>
+                    <a asp-action="Details" asp-route-id="@template.Id" class="btn btn-info">Details</a>
                     @if (User.Identity.IsAuthenticated)
                     {
                         var currentUserId = UserManager.GetUserId(User);
