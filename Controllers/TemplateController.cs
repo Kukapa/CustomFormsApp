@@ -61,17 +61,9 @@ namespace CustomFormsApp.Controllers
 
         [Authorize(Roles = "Admin, User")]
         [HttpGet]
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            var templates = await _context.Templates
-                .Include(t => t.Questions)
-                .ToListAsync();
-
-            foreach (var template in templates)
-            {
-                var owner = await _userManager.FindByIdAsync(template.OwnerUserId);
-                template.OwnerEmail = owner?.Email;
-            }
+            var templates = _context.Templates.Include(t => t.Questions).ToList();
 
             return View(templates);
         }

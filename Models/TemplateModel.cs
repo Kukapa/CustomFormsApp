@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CustomFormsApp.Models
 {
@@ -22,8 +21,5 @@ namespace CustomFormsApp.Models
         public List<QuestionModel> Questions { get; set; } = new List<QuestionModel>();
 
         public string OwnerUserId { get; set; }
-
-        [NotMapped]
-        public string OwnerEmail { get; set; }
     }
 }
