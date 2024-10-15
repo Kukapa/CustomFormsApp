@@ -16,11 +16,17 @@ namespace CustomFormsApp.Data
         public DbSet<QuestionModel> Questions { get; set; }
         public DbSet<FormModel> Forms { get; set; }
         public DbSet<AnswerModel> Answers { get; set; }
+        public DbSet<FilledFormModel> FilledForms { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<FilledFormModel>()
+            .HasOne(f => f.Template)
+            .WithMany(t => t.FilledForms)
+            .HasForeignKey(f => f.TemplateId);
         }
     }
 }
