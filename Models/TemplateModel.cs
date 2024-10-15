@@ -18,8 +18,10 @@ namespace CustomFormsApp.Models
 
         public bool IsPublic { get; set; }
 
-        public List<QuestionModel> Questions { get; set; } = new List<QuestionModel>();
+        public ICollection<QuestionModel> Questions { get; set; }
 
         public string OwnerUserId { get; set; }
+
+        public ICollection<FilledFormModel> FilledForms { get; set; }
     }
 }
