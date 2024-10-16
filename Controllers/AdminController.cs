@@ -82,6 +82,7 @@ namespace CustomFormsApp.Controllers
             var user = await _userManager.FindByIdAsync(id);
             if (user != null)
             {
+                await _userManager.RemoveFromRoleAsync(user, "User");
                 await _userManager.AddToRoleAsync(user, "Admin");
             }
             return RedirectToAction("Index");
@@ -96,6 +97,8 @@ namespace CustomFormsApp.Controllers
 
                 if (result.Succeeded)
                 {
+                    await _userManager.AddToRoleAsync(user, "User");
+
                     if (user.Id == _userManager.GetUserId(User))
                     {
                         await _signInManager.SignOutAsync();
