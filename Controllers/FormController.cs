@@ -128,15 +128,15 @@ namespace CustomFormsApp.Controllers
                     SubmittedAt = DateTime.UtcNow
                 };
 
-                if (question.QuestionType == "SingleLineString" || question.QuestionType == "MultiLineText")
+                if (question.Type == QuestionType.SingleLineString || question.Type == QuestionType.SingleLineString)
                 {
                     answer.AnswerText = Answers[questionId];
                 }
-                else if (question.QuestionType == "PositiveInteger" && int.TryParse(Answers[questionId], out int integerAnswer))
+                else if (question.Type == QuestionType.SingleLineString && int.TryParse(Answers[questionId], out int integerAnswer))
                 {
                     answer.AnswerInteger = integerAnswer;
                 }
-                else if (question.QuestionType == "Checkbox")
+                else if (question.Type == QuestionType.SingleLineString)
                 {
                     answer.AnswerBoolean = Answers.ContainsKey(questionId) && Answers[questionId] == "true";
                 }
