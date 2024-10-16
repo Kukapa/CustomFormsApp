@@ -13,10 +13,18 @@ namespace CustomFormsApp.Models
         public string Description { get; set; }
 
         [Required(ErrorMessage = "Please select the type of the question.")]
-        public string QuestionType { get; set; }
+        public QuestionType Type { get; set; }
 
-        public bool IsVisibleInResults { get; set; } = true;
+        public bool ShowInTable { get; set; }
 
         public TemplateModel Template { get; set; }
+    }
+
+    public enum QuestionType
+    {
+        SingleLineString,
+        MultiLineText,
+        PositiveInteger,
+        Checkbox
     }
 }
