@@ -156,6 +156,11 @@ namespace CustomFormsApp.Controllers
                 .Include(t => t.Questions)
                 .Include(t => t.FilledForms)
                 .FirstOrDefaultAsync(t => t.Id == id);
+            
+            if (template.Questions != null)
+            {
+                Console.WriteLine($"Number of questions: {template.Questions.Count}");
+            }
 
             if (template == null)
             {
@@ -175,6 +180,47 @@ namespace CustomFormsApp.Controllers
             };
 
             return View(viewModel);
+        }
+
+        [HttpGet]
+        public IActionResult AddQuestion(int templateId)
+        {
+            var model = new AddQuestionViewModel
+            {
+                TemplateId = templateId
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddQuestion(AddQuestionViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var template = await _context.Templates.Include(t => t.Questions).FirstOrDefaultAsync(t => t.Id == model.TemplateId);
+
+                if (template == null)
+                {
+                    return NotFound();
+                }
+
+                var question = new QuestionModel
+                {
+                    Title = model.Title,
+                    Description = model.Description,
+                    Type = model.Type,
+                    ShowInTable = model.ShowInTable,
+                    TemplateId = template.Id
+                };
+
+                template.Questions.Add(question);
+                await _context.SaveChangesAsync();
+
+                return RedirectToAction("Details", new { id = model.TemplateId });
+            }
+
+            return View(model);
         }
     }
 }

@@ -32,27 +32,33 @@
             {
                 <a href="@Url.Action("Edit", "Template", new { id = Model.Template.Id })" class="btn btn-primary">Edit Template</a>
             }
+
+            <a asp-action="AddQuestion" asp-route-templateId="@Model.Template.Id" class="btn btn-success">Add Question</a>
         </div>
 
         <div class="tab-pane fade" id="questions" role="tabpanel" aria-labelledby="questions-tab">
             <h4>Questions</h4>
-            @if (Model.CanManageTemplate)
+
+            @if (Model.Template.Questions != null && Model.Template.Questions.Any())
             {
-                <a href="@Url.Action("AddQuestion", "Template", new { templateId = Model.Template.Id })" class="btn btn-secondary">Add Question</a>
+                <ul class="list-group mt-3">
+                    @foreach (var question in Model.Template.Questions)
+                    {
+                        <li class="list-group-item">
+                            <strong>@question.Title:</strong> @question.Description
+                            @if (Model.CanManageTemplate)
+                            {
+                                <a href="@Url.Action("EditQuestion", "Template", new { questionId = question.Id })" class="btn btn-sm btn-warning">Edit</a>
+                                <a href="@Url.Action("DeleteQuestion", "Template", new { questionId = question.Id })" class="btn btn-sm btn-danger">Delete</a>
+                            }
+                        </li>
+                    }
+                </ul>
             }
-            <ul class="list-group mt-3">
-                @foreach (var question in Model.Template.Questions)
-                {
-                    <li class="list-group-item">
-                        <strong>@question.Title:</strong> @question.Description
-                        @if (Model.CanManageTemplate)
-                        {
-                            <a href="@Url.Action("EditQuestion", "Template", new { questionId = question.Id })" class="btn btn-sm btn-warning">Edit</a>
-                            <a href="@Url.Action("DeleteQuestion", "Template", new { questionId = question.Id })" class="btn btn-sm btn-danger">Delete</a>
-                        }
-                    </li>
-                }
-            </ul>
+            else
+            {
+                <p>No questions available.</p>
+            }
         </div>
 
         <div class="tab-pane fade" id="results" role="tabpanel" aria-labelledby="results-tab">
