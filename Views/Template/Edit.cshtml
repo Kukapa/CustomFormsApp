@@ -23,6 +23,11 @@
         <span asp-validation-for="Tags" class="text-danger"></span>
     </div>
 
+    <div>
+        <label asp-for="IsPublic"></label>
+        <input type="checkbox" asp-for="IsPublic" />
+    </div>
+
     <button type="submit" class="btn btn-primary">Update</button>
 </form>
 
