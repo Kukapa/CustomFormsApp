@@ -9,19 +9,19 @@
             <label>@question.Title</label>
             <input type="hidden" name="QuestionIds" value="@question.Id" />
 
-            @if (question.QuestionType == "SingleLineString")
+            @if (question.Type == QuestionType.SingleLineString)
             {
                 <input type="text" name="Answers[@question.Id]" class="form-control" />
             }
-            else if (question.QuestionType == "MultiLineText")
+            else if (question.Type == QuestionType.MultiLineText)
             {
                 <textarea name="Answers[@question.Id]" class="form-control"></textarea>
             }
-            else if (question.QuestionType == "PositiveInteger")
+            else if (question.Type == QuestionType.PositiveInteger)
             {
                 <input type="number" name="Answers[@question.Id]" class="form-control" />
             }
-            else if (question.QuestionType == "Checkbox")
+            else if (question.Type == QuestionType.Checkbox)
             {
                 <input type="checkbox" name="Answers[@question.Id]" value="true" class="form-check-input" />
             }

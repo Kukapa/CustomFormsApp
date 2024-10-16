@@ -6,15 +6,15 @@
 {
     <div>
         <strong>@answer.Question.Title</strong><br />
-        @if (answer.Question.QuestionType == "SingleLineString" || answer.Question.QuestionType == "MultiLineText")
+        @if (answer.Question.Type == QuestionType.SingleLineString || answer.Question.Type == QuestionType.MultiLineText)
         {
             <p>@answer.AnswerText</p>
         }
-        else if (answer.Question.QuestionType == "PositiveInteger")
+        else if (answer.Question.Type == QuestionType.PositiveInteger)
         {
             <p>@answer.AnswerInteger</p>
         }
-        else if (answer.Question.QuestionType == "Checkbox")
+        else if (answer.Question.Type == QuestionType.Checkbox)
         {
             <p>@(answer.AnswerBoolean == true ? "Checked" : "Not Checked")</p>
         }
