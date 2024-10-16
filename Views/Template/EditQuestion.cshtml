@@ -1,0 +1,37 @@
+﻿@model CustomFormsApp.Models.EditQuestionViewModel
+
+<h2>Edit Question</h2>
+
+<form asp-action="EditQuestion" method="post">
+    @Html.AntiForgeryToken()
+
+    <input type="hidden" asp-for="Id" />
+    <input type="hidden" asp-for="TemplateId" />
+
+    <div class="form-group">
+        <label asp-for="Title"></label>
+        <input asp-for="Title" class="form-control" />
+        <span asp-validation-for="Title" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Description"></label>
+        <textarea asp-for="Description" class="form-control"></textarea>
+        <span asp-validation-for="Description" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Type"></label>
+        <select asp-for="Type" class="form-control">
+            <option value="">Select Type</option>
+            <option value="@QuestionType.SingleLineString">SingleLine</option>
+            <option value="@QuestionType.MultiLineText">MultiLine</option>
+            <option value="@QuestionType.PositiveInteger">Positive Integer</option>
+            <option value="@QuestionType.Checkbox">Checkbox</option>
+        </select>
+        <span asp-validation-for="Type" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Save Changes</button>
+    <a asp-action="Details" asp-route-id="@Model.TemplateId" class="btn btn-secondary">Cancel</a>
+</form>

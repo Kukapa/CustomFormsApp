@@ -5,6 +5,7 @@ using CustomFormsApp.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
+using System.Diagnostics;
 
 namespace CustomFormsApp.Controllers
 {
@@ -156,11 +157,6 @@ namespace CustomFormsApp.Controllers
                 .Include(t => t.Questions)
                 .Include(t => t.FilledForms)
                 .FirstOrDefaultAsync(t => t.Id == id);
-            
-            if (template.Questions != null)
-            {
-                Console.WriteLine($"Number of questions: {template.Questions.Count}");
-            }
 
             if (template == null)
             {
@@ -221,6 +217,70 @@ namespace CustomFormsApp.Controllers
             }
 
             return View(model);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> EditQuestion(int questionId)
+        {
+            var question = await _context.Questions.FindAsync(questionId);
+
+            if (question == null)
+            {
+                return NotFound();
+            }
+
+            var model = new EditQuestionViewModel
+            {
+                Id = question.Id,
+                TemplateId = question.TemplateId,
+                Title = question.Title,
+                Description = question.Description,
+                Type = question.Type,
+                ShowInTable = question.ShowInTable
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EditQuestion(EditQuestionViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var question = await _context.Questions.FindAsync(model.Id);
+
+                if (question == null)
+                {
+                    return NotFound();
+                }
+
+                question.Title = model.Title;
+                question.Description = model.Description;
+                question.Type = model.Type;
+                question.ShowInTable = model.ShowInTable;
+
+                await _context.SaveChangesAsync();
+
+                return RedirectToAction("Details", "Template", new { id = model.TemplateId });
+            }
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteQuestion(int id)
+        {
+            var question = await _context.Questions.FindAsync(id);
+            if (question == null)
+            {
+                return NotFound();
+            }
+
+            _context.Questions.Remove(question);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("Details", "Template", new { id = question.TemplateId });
         }
     }
 }

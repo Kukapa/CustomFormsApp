@@ -49,7 +49,10 @@
                             @if (Model.CanManageTemplate)
                             {
                                 <a href="@Url.Action("EditQuestion", "Template", new { questionId = question.Id })" class="btn btn-sm btn-warning">Edit</a>
-                                <a href="@Url.Action("DeleteQuestion", "Template", new { questionId = question.Id })" class="btn btn-sm btn-danger">Delete</a>
+                                <form asp-action="DeleteQuestion" asp-route-id="@question.Id" method="post" style="display:inline;">
+                                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this question?');">Delete</button>
+                                    @Html.AntiForgeryToken()
+                                </form>
                             }
                         </li>
                     }
