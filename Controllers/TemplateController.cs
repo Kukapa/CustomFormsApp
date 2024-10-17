@@ -201,6 +201,10 @@ namespace CustomFormsApp.Controllers
                     return NotFound();
                 }
 
+                var currentUserId = _userManager.GetUserId(User);
+                if (template.OwnerUserId != currentUserId && !User.IsInRole("Admin")) 
+                    return Forbid();
+
                 var question = new QuestionModel
                 {
                     Title = model.Title,
