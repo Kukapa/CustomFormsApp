@@ -155,6 +155,7 @@ namespace CustomFormsApp.Controllers
         {
             var template = await _context.Templates
                 .Include(t => t.Questions)
+                .Include(t => t.FilledForms)
                 .FirstOrDefaultAsync(t => t.Id == id);
 
             if (template == null)
@@ -168,10 +169,16 @@ namespace CustomFormsApp.Controllers
                 .Include(a => a.User)
                 .ToListAsync();
 
+            var user = await _userManager.GetUserAsync(User);
+            var isAdmin = User.IsInRole("Admin");
+            var canManageTemplate = isAdmin || template.OwnerUserId == user.Id;
+
             var viewModel = new TemplateDetailsViewModel
             {
                 Template = template,
-                FormResults = formResults
+                FormResults = formResults,
+                CanManageTemplate = canManageTemplate,
+                IsAdmin = isAdmin
             };
 
             return View(viewModel);
@@ -284,6 +291,28 @@ namespace CustomFormsApp.Controllers
             await _context.SaveChangesAsync();
 
             return RedirectToAction("Details", "Template", new { id = question.TemplateId });
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ViewAnswers(int answerId)
+        {
+            var answer = await _context.Answers
+                .Include(a => a.Question)
+                .Include(a => a.User) 
+                .FirstOrDefaultAsync(a => a.Id == answerId);
+
+            if (answer == null)
+            {
+                return NotFound();
+            }
+
+            var viewModel = new ViewAnswersViewModel
+            {
+                Answer = answer,
+                UserName = answer.User.UserName
+            };
+
+            return View(viewModel);
         }
     }
 }
