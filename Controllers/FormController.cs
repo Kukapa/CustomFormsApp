@@ -151,7 +151,9 @@ namespace CustomFormsApp.Controllers
                 .Select(q => q.TemplateId)
                 .FirstOrDefault();
 
-            return RedirectToAction("Result", "Form", new { templateId });
+            TempData["SuccessMessage"] = "Your answers have been successfully submitted.";
+
+            return RedirectToAction("Details", "Template", new { id = templateId });
         }
 
         [HttpGet]
