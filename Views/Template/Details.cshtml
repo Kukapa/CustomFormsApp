@@ -7,6 +7,13 @@
 }
 
 <div class="container mt-4">
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">
+            @TempData["SuccessMessage"]
+        </div>
+    }
+
     <h2>@Model.Template.Title</h2>
 
     <ul class="nav nav-tabs" id="templateDetailsTabs" role="tablist">
@@ -16,19 +23,14 @@
         <li class="nav-item">
             <a class="nav-link" id="questions-tab" data-toggle="tab" href="#questions" role="tab" aria-controls="questions" aria-selected="false">Questions</a>
         </li>
-        @if (User.Identity.IsAuthenticated)
+        @if (Model.CanManageTemplate)
             {
-                var currentUserId = UserManager.GetUserId(User);
-
-                @if (User.IsInRole("Admin") || @Model.Template.OwnerUserId == currentUserId)
-                {
-                    <li class="nav-item">
-                        <a class="nav-link" id="results-tab" data-toggle="tab" href="#results" role="tab" aria-controls="results" aria-selected="false">Results</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" id="aggregated-tab" data-toggle="tab" href="#aggregated" role="tab" aria-controls="aggregated" aria-selected="false">Aggregated Results</a>
-                   </li>
-                }
+                <li class="nav-item">
+                    <a class="nav-link" id="results-tab" data-toggle="tab" href="#results" role="tab" aria-controls="results" aria-selected="false">Results</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="aggregated-tab" data-toggle="tab" href="#aggregated" role="tab" aria-controls="aggregated" aria-selected="false">Aggregated Results</a>
+                </li>  
             }
     </ul>
 
@@ -42,16 +44,17 @@
             {
                 <a href="@Url.Action("Edit", "Template", new { id = Model.Template.Id })" class="btn btn-primary">Edit Template</a>
             }
-
-            @if (User.Identity.IsAuthenticated)
+           
+            @if (User.Identity.IsAuthenticated && Model.Template.IsPublic)
             {
-                var currentUserId = UserManager.GetUserId(User);
-
-                @if (User.IsInRole("Admin") || @Model.Template.OwnerUserId == currentUserId)
-                {
-                    <a asp-action="AddQuestion" asp-route-templateId="@Model.Template.Id" class="btn btn-success">Add Question</a>
-                }
+                <a asp-action="Answer" asp-controller="Form" asp-route-templateId="@Model.Template.Id" class="btn btn-primary">Fill the Form</a>
             }
+
+            @if (Model.CanManageTemplate)
+            {
+                <a asp-action="AddQuestion" asp-route-templateId="@Model.Template.Id" class="btn btn-success">Add Question</a>
+            }
+
         </div>
 
         <div class="tab-pane fade" id="questions" role="tabpanel" aria-labelledby="questions-tab">
@@ -83,53 +86,18 @@
         </div>
 
         <div class="tab-pane fade" id="results" role="tabpanel" aria-labelledby="results-tab">
-            <h4>Form Results</h4>
-
-            @if (Model.FormResults != null && Model.FormResults.Any())
-            {
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Submitted by</th> 
-                            <th>Question</th>
-                            <th>Answer</th>
-                            <th>Submitted At</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var answer in Model.FormResults)
-                        {
-                            <tr>
-                                <td>@answer.User.UserName</td>
-                                <td>@answer.Question.Title</td>
-                                <td>
-                                    @if (!string.IsNullOrEmpty(answer.AnswerText))
-                                    {
-                                        @answer.AnswerText
-                                    }
-                                    else if (answer.AnswerInteger.HasValue)
-                                    {
-                                        @answer.AnswerInteger.Value
-                                    }
-                                    else if (answer.AnswerBoolean.HasValue)
-                                    {
-                                        @(answer.AnswerBoolean.Value ? "Yes" : "No")
-                                            }
-                                    else
-                                    {
-                                        <text>No Answer Provided</text>
-                                    }
-                                </td>
-                                <td>@answer.SubmittedAt.ToString("g")</td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            }
-            else
-            {
-                <p>No answers submitted yet.</p>
-            }
+            <h4>Form Submissions</h4>
+            <ul class="list-group mt-3">
+                @foreach (var form in Model.FormResults)
+                {
+                    <li class="list-group-item">
+                        <h5>Submission ID: @form.Id</h5>
+                        Submitted By: @form.User.UserName
+                        <br />
+                        <a href="@Url.Action("ViewAnswers", "Template", new { answerId = form.Id })" class="btn btn-primary mt-2">Check Answers</a>
+                    </li>
+                }
+            </ul>
         </div>
 
         <div class="tab-pane fade" id="aggregated" role="tabpanel" aria-labelledby="aggregated-tab">
