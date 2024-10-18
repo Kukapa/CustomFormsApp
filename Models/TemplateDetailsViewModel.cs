@@ -4,6 +4,8 @@
     {
         public TemplateModel Template { get; set; }
         public bool CanManageTemplate { get; set; } 
-        public bool IsAdmin { get; set; } 
+        public bool IsAdmin { get; set; }
+
+        public List<AnswerModel> FormResults { get; set; }
     }
 }

@@ -155,7 +155,6 @@ namespace CustomFormsApp.Controllers
         {
             var template = await _context.Templates
                 .Include(t => t.Questions)
-                .Include(t => t.FilledForms)
                 .FirstOrDefaultAsync(t => t.Id == id);
 
             if (template == null)
@@ -163,16 +162,16 @@ namespace CustomFormsApp.Controllers
                 return NotFound();
             }
 
-            var user = await _userManager.GetUserAsync(User);
-            var isAdmin = User.IsInRole("Admin");
-
-            var canManageTemplate = isAdmin || template.OwnerUserId == user.Id;
+            var formResults = await _context.Answers
+                .Where(a => a.Question.TemplateId == id)
+                .Include(a => a.Question)
+                .Include(a => a.User)
+                .ToListAsync();
 
             var viewModel = new TemplateDetailsViewModel
             {
                 Template = template,
-                CanManageTemplate = canManageTemplate,
-                IsAdmin = isAdmin
+                FormResults = formResults
             };
 
             return View(viewModel);
