@@ -1,0 +1,30 @@
+﻿@model CustomFormsApp.Models.ViewAnswersViewModel
+
+<div class="container">
+    <h2>Answers Submitted by @Model.UserName</h2>
+    <hr />
+
+    <div class="card mt-3">
+        <div class="card-body">
+            <h4>Question: @Model.Answer.Question.Title</h4>
+            @if (!string.IsNullOrEmpty(Model.Answer.AnswerText))
+            {
+                <p><strong>Answer:</strong> @Model.Answer.AnswerText</p>
+            }
+            else if (Model.Answer.AnswerInteger.HasValue)
+            {
+                <p><strong>Answer:</strong> @Model.Answer.AnswerInteger.Value</p>
+            }
+            else if (Model.Answer.AnswerBoolean.HasValue)
+            {
+                <p><strong>Answer:</strong> @(Model.Answer.AnswerBoolean.Value ? "Yes" : "No")</p>
+            }
+            else
+            {
+                <p><strong>Answer:</strong> No answer provided</p>
+            }
+        </div>
+    </div>
+
+    <a href="@Url.Action("Details", "Template", new { id = Model.Answer.Question.TemplateId })" class="btn btn-secondary mt-3">Back to Template</a>
+</div>
