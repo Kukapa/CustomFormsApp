@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Identity;
+using System.ComponentModel.DataAnnotations;
 
 namespace CustomFormsApp.Models
 {
@@ -22,5 +23,7 @@ namespace CustomFormsApp.Models
         public DateTime SubmittedAt { get; set; }
 
         public QuestionModel Question { get; set; }
+
+        public IdentityUser User { get; set; }
     }
 }
