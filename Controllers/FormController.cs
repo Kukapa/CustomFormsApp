@@ -47,12 +47,10 @@ namespace CustomFormsApp.Controllers
                 _context.Forms.Add(model);
                 await _context.SaveChangesAsync();
 
-                TempData["SuccessMessage"] = "Form submitted successfully.";
                 return RedirectToAction("Index");
             }
             else
             {
-                TempData["ErrorMessage"] = "There were validation errors.";
                 return View("Index", model);
             }
         }
@@ -112,48 +110,53 @@ namespace CustomFormsApp.Controllers
         {
             var userId = _userManager.GetUserId(User);
 
+            var filledForm = new FilledFormModel
+            {
+                UserId = userId,
+                DateFilled = DateTime.UtcNow,
+                TemplateId = _context.Questions
+                    .Where(q => QuestionIds.Contains(q.Id))
+                    .Select(q => q.TemplateId)
+                    .FirstOrDefault(),
+                Answers = new List<AnswerModel>()
+            };
+
+            _context.FilledForms.Add(filledForm);
+            await _context.SaveChangesAsync();
+
             foreach (var questionId in QuestionIds)
             {
                 var question = await _context.Questions.FindAsync(questionId);
-
-                if (question == null)
-                {
-                    continue;
-                }
+                if (question == null) continue;
 
                 var answer = new AnswerModel
                 {
                     QuestionId = questionId,
                     UserId = userId,
-                    SubmittedAt = DateTime.UtcNow
+                    SubmittedAt = DateTime.UtcNow,
+                    FilledFormId = filledForm.Id 
                 };
 
-                if (question.Type == QuestionType.SingleLineString || question.Type == QuestionType.SingleLineString)
+                if (question.Type == QuestionType.SingleLineString || question.Type == QuestionType.MultiLineText)
                 {
-                    answer.AnswerText = Answers[questionId];
+                    answer.AnswerText = Answers.ContainsKey(questionId) ? Answers[questionId] : null;
                 }
-                else if (question.Type == QuestionType.SingleLineString && int.TryParse(Answers[questionId], out int integerAnswer))
+                else if (question.Type == QuestionType.PositiveInteger && int.TryParse(Answers[questionId], out int integerAnswer))
                 {
                     answer.AnswerInteger = integerAnswer;
                 }
-                else if (question.Type == QuestionType.SingleLineString)
+                else if (question.Type == QuestionType.Checkbox)
                 {
                     answer.AnswerBoolean = Answers.ContainsKey(questionId) && Answers[questionId] == "true";
                 }
 
-                _context.Answers.Add(answer);
+                filledForm.Answers.Add(answer);
             }
 
             await _context.SaveChangesAsync();
 
-            var templateId = _context.Questions
-                .Where(q => QuestionIds.Contains(q.Id))
-                .Select(q => q.TemplateId)
-                .FirstOrDefault();
-
             TempData["SuccessMessage"] = "Your answers have been successfully submitted.";
-
-            return RedirectToAction("Details", "Template", new { id = templateId });
+            return RedirectToAction("Details", "Template", new { id = filledForm.TemplateId });
         }
 
         [HttpGet]
