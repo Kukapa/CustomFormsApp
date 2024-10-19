@@ -2,7 +2,7 @@
 {
     public class ViewAnswersViewModel
     {
-        public AnswerModel Answer { get; set; }
+        public FilledFormModel FilledForm { get; set; }
         public string UserName { get; set; }
     }
 }

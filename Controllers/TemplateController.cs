@@ -5,7 +5,6 @@ using CustomFormsApp.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
-using System.Diagnostics;
 
 namespace CustomFormsApp.Controllers
 {
@@ -156,18 +155,13 @@ namespace CustomFormsApp.Controllers
             var template = await _context.Templates
                 .Include(t => t.Questions)
                 .Include(t => t.FilledForms)
+                .ThenInclude(ff => ff.User)
                 .FirstOrDefaultAsync(t => t.Id == id);
 
             if (template == null)
             {
                 return NotFound();
             }
-
-            var formResults = await _context.Answers
-                .Where(a => a.Question.TemplateId == id)
-                .Include(a => a.Question)
-                .Include(a => a.User)
-                .ToListAsync();
 
             var user = await _userManager.GetUserAsync(User);
             var isAdmin = User.IsInRole("Admin");
@@ -176,7 +170,7 @@ namespace CustomFormsApp.Controllers
             var viewModel = new TemplateDetailsViewModel
             {
                 Template = template,
-                FormResults = formResults,
+                FormResults = template.FilledForms.ToList(),
                 CanManageTemplate = canManageTemplate,
                 IsAdmin = isAdmin
             };
@@ -294,22 +288,23 @@ namespace CustomFormsApp.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> ViewAnswers(int answerId)
+        public async Task<IActionResult> ViewAnswers(int filledFormId)
         {
-            var answer = await _context.Answers
-                .Include(a => a.Question)
-                .Include(a => a.User) 
-                .FirstOrDefaultAsync(a => a.Id == answerId);
+            var filledForm = await _context.FilledForms
+                .Include(ff => ff.Answers)
+                .ThenInclude(a => a.Question)
+                .Include(ff => ff.User)
+                .FirstOrDefaultAsync(ff => ff.Id == filledFormId);
 
-            if (answer == null)
+            if (filledForm == null)
             {
                 return NotFound();
             }
 
             var viewModel = new ViewAnswersViewModel
             {
-                Answer = answer,
-                UserName = answer.User.UserName
+                FilledForm = filledForm,
+                UserName = filledForm.User.UserName
             };
 
             return View(viewModel);
