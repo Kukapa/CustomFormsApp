@@ -1,0 +1,67 @@
+﻿@model CustomFormsApp.Models.ProfileViewModel
+
+<div class="container">
+    <h2>Your Profile</h2>
+    <hr />
+
+    <ul class="nav nav-tabs" id="profileTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="templates-tab" data-bs-toggle="tab" data-bs-target="#templates" type="button" role="tab" aria-controls="templates" aria-selected="true">Your Templates</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="filledforms-tab" data-bs-toggle="tab" data-bs-target="#filledforms" type="button" role="tab" aria-controls="filledforms" aria-selected="false">Filled Forms</button>
+        </li>
+    </ul>
+
+    <div class="tab-content mt-3" id="profileTabContent">
+        <div class="tab-pane fade show active" id="templates" role="tabpanel" aria-labelledby="templates-tab">
+            <h4>Your Templates</h4>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var template in Model.Templates)
+                    {
+                        <tr>
+                            <td>@template.Title</td>
+                            <td>
+                                <a href="@Url.Action("Details", "Template", new { id = template.Id })" class="btn btn-primary btn-sm">View</a>
+                                <a href="@Url.Action("Edit", "Template", new { id = template.Id })" class="btn btn-secondary btn-sm">Edit</a>
+                                <a href="@Url.Action("Delete", "Template", new { id = template.Id })" class="btn btn-danger btn-sm">Delete</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <div class="tab-pane fade" id="filledforms" role="tabpanel" aria-labelledby="filledforms-tab">
+            <h4>Filled Forms</h4>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Template</th>
+                        <th>Date Filled</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var form in Model.FilledForms)
+                    {
+                        <tr>
+                            <td>@form.Template.Title</td>
+                            <td>@form.DateFilled.ToShortDateString()</td>
+                            <td>
+                                <a href="@Url.Action("ViewAnswers", "Template", new { filledFormId = form.Id })" class="btn btn-primary btn-sm">View Answers</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

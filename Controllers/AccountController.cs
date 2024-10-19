@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using CustomFormsApp.Models;
 using Microsoft.AspNetCore.Authorization;
+using CustomFormsApp.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace CustomFormsApp.Controllers
 {
@@ -11,12 +13,14 @@ namespace CustomFormsApp.Controllers
         private readonly UserManager<IdentityUser> _userManager;
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly ApplicationDbContext _context;
 
-        public AccountController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, RoleManager<IdentityRole> roleManager)
+        public AccountController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, RoleManager<IdentityRole> roleManager, ApplicationDbContext context)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _roleManager = roleManager;
+            _context = context;
         }
 
         [AllowAnonymous]
@@ -98,6 +102,33 @@ namespace CustomFormsApp.Controllers
         {
             await _signInManager.SignOutAsync();
             return RedirectToAction("Login", "Account");
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Profile()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            var templates = await _context.Templates
+                .Where(t => t.OwnerUserId == user.Id)
+                .ToListAsync();
+
+            var filledForms = await _context.FilledForms
+                .Include(f => f.Template)
+                .Where(f => f.UserId == user.Id)
+                .ToListAsync();
+
+            var viewModel = new ProfileViewModel
+            {
+                Templates = templates,
+                FilledForms = filledForms
+            };
+
+            return View(viewModel);
         }
     }
 }
