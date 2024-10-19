@@ -25,5 +25,10 @@ namespace CustomFormsApp.Models
         public QuestionModel Question { get; set; }
 
         public IdentityUser User { get; set; }
+
+        [Required]
+        public int FilledFormId { get; set; }
+
+        public FilledFormModel FilledForm { get; set; }
     }
 }

@@ -4,27 +4,30 @@
     <h2>Answers Submitted by @Model.UserName</h2>
     <hr />
 
-    <div class="card mt-3">
-        <div class="card-body">
-            <h4>Question: @Model.Answer.Question.Title</h4>
-            @if (!string.IsNullOrEmpty(Model.Answer.AnswerText))
-            {
-                <p><strong>Answer:</strong> @Model.Answer.AnswerText</p>
-            }
-            else if (Model.Answer.AnswerInteger.HasValue)
-            {
-                <p><strong>Answer:</strong> @Model.Answer.AnswerInteger.Value</p>
-            }
-            else if (Model.Answer.AnswerBoolean.HasValue)
-            {
-                <p><strong>Answer:</strong> @(Model.Answer.AnswerBoolean.Value ? "Yes" : "No")</p>
-            }
-            else
-            {
-                <p><strong>Answer:</strong> No answer provided</p>
-            }
+    @foreach (var answer in Model.FilledForm.Answers)
+    {
+        <div class="card mt-3">
+            <div class="card-body">
+                <h4>Question: @answer.Question.Title</h4>
+                @if (!string.IsNullOrEmpty(answer.AnswerText))
+                {
+                    <p><strong>Answer:</strong> @answer.AnswerText</p>
+                }
+                else if (answer.AnswerInteger.HasValue)
+                {
+                    <p><strong>Answer:</strong> @answer.AnswerInteger.Value</p>
+                }
+                else if (answer.AnswerBoolean.HasValue)
+                {
+                    <p><strong>Answer:</strong> @(answer.AnswerBoolean.Value ? "Yes" : "No")</p>
+                }
+                else
+                {
+                    <p><strong>Answer:</strong> No answer provided</p>
+                }
+            </div>
         </div>
-    </div>
+    }
 
-    <a href="@Url.Action("Details", "Template", new { id = Model.Answer.Question.TemplateId })" class="btn btn-secondary mt-3">Back to Template</a>
+    <a href="@Url.Action("Details", "Template", new { id = Model.FilledForm.TemplateId })" class="btn btn-secondary mt-3">Back to Template</a>
 </div>

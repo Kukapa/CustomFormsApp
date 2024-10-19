@@ -88,13 +88,13 @@
         <div class="tab-pane fade" id="results" role="tabpanel" aria-labelledby="results-tab">
             <h4>Form Submissions</h4>
             <ul class="list-group mt-3">
-                @foreach (var form in Model.FormResults)
+                @foreach (var filledForm in Model.FormResults)
                 {
                     <li class="list-group-item">
-                        <h5>Submission ID: @form.Id</h5>
-                        Submitted By: @form.User.UserName
+                        <h5>Submission ID: @filledForm.Id</h5>
+                        Submitted By: @filledForm.User.UserName
                         <br />
-                        <a href="@Url.Action("ViewAnswers", "Template", new { answerId = form.Id })" class="btn btn-primary mt-2">Check Answers</a>
+                        <a href="@Url.Action("ViewAnswers", "Template", new { filledFormId = filledForm.Id })" class="btn btn-primary mt-2">Check Answers</a>
                     </li>
                 }
             </ul>
