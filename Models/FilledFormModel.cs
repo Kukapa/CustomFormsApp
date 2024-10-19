@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Identity;
+using System;
 using System.Collections.Generic;
 
 namespace CustomFormsApp.Models
@@ -11,6 +12,7 @@ namespace CustomFormsApp.Models
         public DateTime DateFilled { get; set; }
 
         public string UserId { get; set; }
-        public ICollection<AnswerModel> Answers { get; set; }
+        public IdentityUser User { get; set; }
+        public ICollection<AnswerModel> Answers { get; set; } = new List<AnswerModel>();
     }
 }
