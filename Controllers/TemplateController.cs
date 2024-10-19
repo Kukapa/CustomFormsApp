@@ -85,7 +85,10 @@ namespace CustomFormsApp.Controllers
             }
 
             var currentUserId = _userManager.GetUserId(User);
-            if (template.OwnerUserId != currentUserId && !User.IsInRole("Admin")) return Forbid();
+            if (template.OwnerUserId != currentUserId && !User.IsInRole("Admin"))
+            {
+                return Forbid();
+            }
 
             return View(template);
         }
@@ -99,10 +102,18 @@ namespace CustomFormsApp.Controllers
                 return NotFound();
             }
 
-            if (string.IsNullOrEmpty(templateModel.OwnerUserId))
+            var existingTemplate = await _context.Templates
+                                                 .FirstOrDefaultAsync(t => t.Id == id);
+
+            if (existingTemplate == null)
             {
-                templateModel.OwnerUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                return NotFound();
             }
+
+            existingTemplate.Title = templateModel.Title;
+            existingTemplate.Description = templateModel.Description;
+            existingTemplate.IsPublic = templateModel.IsPublic;
+            existingTemplate.Tags = templateModel.Tags;
 
             ModelState.Remove("OwnerUserId");
 
@@ -110,7 +121,7 @@ namespace CustomFormsApp.Controllers
             {
                 try
                 {
-                    _context.Update(templateModel);
+                    _context.Update(existingTemplate);
                     await _context.SaveChangesAsync();
                     return RedirectToAction(nameof(Index));
                 }
@@ -129,6 +140,7 @@ namespace CustomFormsApp.Controllers
 
             return View(templateModel);
         }
+
 
         [Authorize(Roles = "Admin, User")]
         [HttpPost]
