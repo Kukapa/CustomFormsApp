@@ -20,3 +20,15 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+.search-input {
+    margin-top: 5px;
+    width: 100px;
+    height: 30px;
+}
+
+.search-button {
+    margin-top: 5px;
+    width: 55px;
+    height: 30px;
+}

@@ -1,6 +1,4 @@
 ﻿@model CustomFormsApp.Models.TemplateDetailsViewModel
-@using Microsoft.AspNetCore.Identity
-@inject UserManager<IdentityUser> UserManager
  
 @{
     ViewData["Title"] = "Template Details";
@@ -42,19 +40,15 @@
             <p><strong>Tags:</strong> @Model.Template.Tags</p>
             @if (Model.CanManageTemplate)
             {
-                <a href="@Url.Action("Edit", "Template", new { id = Model.Template.Id })" class="btn btn-primary">Edit Template</a>
+               <a href="@Url.Action("Edit", "Template", new { id = Model.Template.Id })" class="btn btn-primary">Edit Template</a>
+               <a asp-action="Answer" asp-controller="Form" asp-route-templateId="@Model.Template.Id" class="btn btn-primary">Fill the Form</a>
+               <a asp-action="AddQuestion" asp-route-templateId="@Model.Template.Id" class="btn btn-success">Add Question</a>
             }
            
-            @if (User.Identity.IsAuthenticated && Model.Template.IsPublic)
+            @if (User.Identity.IsAuthenticated && !Model.CanManageTemplate)
             {
                 <a asp-action="Answer" asp-controller="Form" asp-route-templateId="@Model.Template.Id" class="btn btn-primary">Fill the Form</a>
             }
-
-            @if (Model.CanManageTemplate)
-            {
-                <a asp-action="AddQuestion" asp-route-templateId="@Model.Template.Id" class="btn btn-success">Add Question</a>
-            }
-
         </div>
 
         <div class="tab-pane fade" id="questions" role="tabpanel" aria-labelledby="questions-tab">
@@ -102,6 +96,23 @@
 
         <div class="tab-pane fade" id="aggregated" role="tabpanel" aria-labelledby="aggregated-tab">
             <h4>Aggregated Results</h4>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Question</th>
+                        <th>Average Answer</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var question in Model.Template.Questions.Where(q => q.Type == CustomFormsApp.Models.QuestionType.PositiveInteger))
+                    {
+                        <tr>
+                            <td>@question.Title</td>
+                            <td>@Model.Averages[question.Id]</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
         </div>
     </div>
 </div>

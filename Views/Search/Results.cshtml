@@ -1,0 +1,22 @@
+﻿@model List<CustomFormsApp.Models.TemplateModel>
+
+<div class="container">
+    <h2>Search Results</h2>
+
+    @if (Model.Count == 0)
+    {
+        <p>No templates found matching your search criteria.</p>
+    }
+    else
+    {
+        <ul class="list-group">
+            @foreach (var template in Model)
+            {
+                <li class="list-group-item">
+                    <h5>@Html.ActionLink(template.Title, "Details", "Template", new { id = template.Id }, null)</h5>
+                    <p>@template.Description</p>
+                </li>
+            }
+        </ul>
+    }
+</div>
