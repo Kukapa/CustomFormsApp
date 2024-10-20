@@ -54,6 +54,7 @@ namespace CustomFormsApp.Controllers
             catch (Exception)
             {
                 ModelState.AddModelError(string.Empty, "An error occurred while creating the template.");
+                return View(model);
             }
 
             return RedirectToAction("Index");
@@ -114,6 +115,7 @@ namespace CustomFormsApp.Controllers
             existingTemplate.Description = templateModel.Description;
             existingTemplate.IsPublic = templateModel.IsPublic;
             existingTemplate.Tags = templateModel.Tags;
+            existingTemplate.Topic = templateModel.Topic;
 
             ModelState.Remove("OwnerUserId");
 

@@ -16,6 +16,9 @@ namespace CustomFormsApp.Models
         [Required(ErrorMessage = "Tags are required")]
         public string Tags { get; set; }
 
+        [Required(ErrorMessage = "Topic is required.")]
+        public Topic Topic { get; set; }
+
         public bool IsPublic { get; set; }
 
         public List<QuestionModel> Questions { get; set; } = new List<QuestionModel>();
@@ -23,5 +26,13 @@ namespace CustomFormsApp.Models
         public string OwnerUserId { get; set; }
 
         public List<FilledFormModel> FilledForms { get; set; } = new List<FilledFormModel>();
+    }
+
+    public enum Topic
+    {
+        Education,
+        Technology,
+        Science,
+        Other
     }
 }
