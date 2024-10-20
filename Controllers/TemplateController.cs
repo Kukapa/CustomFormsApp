@@ -175,6 +175,20 @@ namespace CustomFormsApp.Controllers
                 return NotFound();
             }
 
+            var numericQuestions = template.Questions.Where(q => q.Type == QuestionType.PositiveInteger);
+            var averages = new Dictionary<int, double>();
+
+            foreach (var question in numericQuestions)
+            {
+                var answers = template.FilledForms
+                    .SelectMany(f => f.Answers)
+                    .Where(a => a.QuestionId == question.Id && a.AnswerInteger.HasValue)
+                    .Select(a => a.AnswerInteger.Value)
+                    .ToList();
+
+                averages[question.Id] = answers.Any() ? answers.Average() : 0;
+            }
+
             var user = await _userManager.GetUserAsync(User);
             var isAdmin = User.IsInRole("Admin");
             var canManageTemplate = isAdmin || template.OwnerUserId == user.Id;
@@ -184,7 +198,8 @@ namespace CustomFormsApp.Controllers
                 Template = template,
                 FormResults = template.FilledForms.ToList(),
                 CanManageTemplate = canManageTemplate,
-                IsAdmin = isAdmin
+                IsAdmin = isAdmin,
+                Averages = averages
             };
 
             return View(viewModel);

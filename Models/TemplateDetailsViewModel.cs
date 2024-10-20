@@ -6,5 +6,6 @@
         public bool CanManageTemplate { get; set; } 
         public bool IsAdmin { get; set; }
         public List<FilledFormModel> FormResults { get; set; }
+        public Dictionary<int, double> Averages { get; set; }
     }
 }
