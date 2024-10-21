@@ -338,5 +338,17 @@ namespace CustomFormsApp.Controllers
 
             return View(viewModel);
         }
+
+        [HttpGet]
+        public IActionResult GetTags(string searchTerm)
+        {
+            var tags = _context.Templates
+                .Select(t => t.Tags)
+                .Where(t => t.Contains(searchTerm))
+                .Distinct()
+                .ToList();
+
+            return Json(tags);
+        }
     }
 }

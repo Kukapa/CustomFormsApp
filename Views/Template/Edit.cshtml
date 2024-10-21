@@ -18,9 +18,9 @@
     </div>
 
     <div class="form-group">
-        <label asp-for="Tags"></label>
-        <input asp-for="Tags" class="form-control" />
-        <span asp-validation-for="Tags" class="text-danger"></span>
+        <label for="tags">Tags</label>
+        <input type="text" id="tags" name="Tags" class="form-control" placeholder="Add tags" />
+        <ul id="tag-suggestions" class="list-group" style="display:none;"></ul>
     </div>
 
     <div class="form-group">
@@ -39,4 +39,36 @@
     <button type="submit" class="btn btn-primary">Update</button>
 </form>
 
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('#tags').on('input', function () {
+                var query = $(this).val();
+                if (query.length > 0) {
+                    $.ajax({
+                        url: '@Url.Action("GetTags", "Template")',
+                        type: 'GET',
+                        data: { searchTerm: query },
+                        success: function (data) {
+                            $('#tag-suggestions').empty().show();
+                            $.each(data, function (index, tag) {
+                                $('#tag-suggestions').append('<li class="list-group-item">' + tag + '</li>');
+                            });
+                        },
+                        error: function () {
+                            $('#tag-suggestions').hide();
+                        }
+                    });
+                } else {
+                    $('#tag-suggestions').hide();
+                }
+            });
 
+            $(document).on('click', '.list-group-item', function () {
+                var tag = $(this).text();
+                $('#tags').val(tag);
+                $('#tag-suggestions').hide();
+            });
+        });
+    </script>
+}
