@@ -170,6 +170,8 @@ namespace CustomFormsApp.Controllers
                 .Include(t => t.Questions)
                 .Include(t => t.FilledForms)
                 .ThenInclude(ff => ff.User)
+                .Include(t => t.Comments)
+                .Include(t => t.Likes)
                 .FirstOrDefaultAsync(t => t.Id == id);
 
             if (template == null)
@@ -189,19 +191,22 @@ namespace CustomFormsApp.Controllers
                     .ToList();
 
                 averages[question.Id] = answers.Any() ? answers.Average() : 0;
-            }
+            }          
 
             var user = await _userManager.GetUserAsync(User);
             var isAdmin = User.IsInRole("Admin");
             var canManageTemplate = isAdmin || template.OwnerUserId == user.Id;
-
+            
+            bool hasUserLiked = template.Likes.Any(l => l.UserName == user.Id);
+            
             var viewModel = new TemplateDetailsViewModel
             {
                 Template = template,
                 FormResults = template.FilledForms.ToList(),
                 CanManageTemplate = canManageTemplate,
                 IsAdmin = isAdmin,
-                Averages = averages
+                Averages = averages,
+                HasUserLiked = hasUserLiked
             };
 
             return View(viewModel);
@@ -349,6 +354,75 @@ namespace CustomFormsApp.Controllers
                 .ToList();
 
             return Json(tags);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ToggleLike(int templateId)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            var template = await _context.Templates
+                .Include(t => t.Likes)
+                .FirstOrDefaultAsync(t => t.Id == templateId);
+
+            if (template == null || user == null)
+            {
+                return NotFound();
+            }
+
+            var existingLike = template.Likes.FirstOrDefault(l => l.UserName == user.UserName);
+            if (existingLike != null)
+            {
+                _context.Likes.Remove(existingLike);
+            }
+            else
+            {
+                template.Likes.Add(new LikeModel
+                {
+                    TemplateId = templateId,
+                    UserName = user.UserName
+                });
+            }
+
+            await _context.SaveChangesAsync();
+            return RedirectToAction("Details", new { id = templateId });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddComment(int templateId, string commentContent)
+        {
+            if (string.IsNullOrWhiteSpace(commentContent) || templateId <= 0)
+            {
+                return BadRequest("Invalid data.");
+            }
+
+            var template = await _context.Templates
+                                         .Include(t => t.Comments)
+                                         .FirstOrDefaultAsync(t => t.Id == templateId);
+
+            if (template == null)
+            {
+                return NotFound("Template not found.");
+            }
+
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return Unauthorized("You must be logged in to post a comment.");
+            }
+
+            var comment = new CommentModel
+            {
+                Content = commentContent,
+                CreatedDate = DateTime.UtcNow,
+                UserName = user.UserName,
+                TemplateId = templateId
+            };
+
+            template.Comments.Add(comment);
+            _context.Update(template);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("Details", new { id = templateId });
         }
     }
 }

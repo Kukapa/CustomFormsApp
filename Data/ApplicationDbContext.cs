@@ -17,7 +17,9 @@ namespace CustomFormsApp.Data
         public DbSet<FormModel> Forms { get; set; }
         public DbSet<AnswerModel> Answers { get; set; }
         public DbSet<FilledFormModel> FilledForms { get; set; }
-
+        public DbSet<LikeModel> Likes { get; set; }
+        public DbSet<CommentModel> Comments { get; set; }
+        public DbSet<TagModel> Tags { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

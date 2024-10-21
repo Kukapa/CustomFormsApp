@@ -27,7 +27,8 @@ namespace CustomFormsApp.Controllers
 
             var templates = await _context.Templates
                 .Where(t => t.Title.Contains(query) || t.Description.Contains(query) ||
-                            t.Questions.Any(q => q.Title.Contains(query))) // || t.Comments.Any(c => c.Text.Contains(query)))
+                            t.Questions.Any(q => q.Title.Contains(query)) || 
+                            t.Comments.Any(c => c.Content.Contains(query)))
                 .Include(t => t.Questions)
                 .ToListAsync();
 

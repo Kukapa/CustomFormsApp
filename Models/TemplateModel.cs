@@ -26,6 +26,10 @@ namespace CustomFormsApp.Models
         public string OwnerUserId { get; set; }
 
         public List<FilledFormModel> FilledForms { get; set; } = new List<FilledFormModel>();
+        public List<LikeModel> Likes { get; set; } = new List<LikeModel>();
+        public List<CommentModel> Comments { get; set; } = new List<CommentModel>();
+
+        public DateTime CreatedDate { get; set; } = DateTime.Now;
     }
 
     public enum Topic
