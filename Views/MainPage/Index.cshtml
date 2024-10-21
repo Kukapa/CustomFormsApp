@@ -1,0 +1,25 @@
+﻿@model CustomFormsApp.Models.MainPageViewModel
+
+<h2>Latest Templates</h2>
+<ul>
+    @foreach (var template in Model.LatestTemplates)
+    {
+        <li>@template.Title</li>
+    }
+</ul>
+
+<h2>Popular Templates</h2>
+<ul>
+    @foreach (var template in Model.PopularTemplates)
+    {
+        <li>@template.Title</li>
+    }
+</ul>
+
+<h2>Tag Cloud</h2>
+<ul>
+    @foreach (var tag in Model.TagCloud)
+    {
+        <li>@tag.Tag (@tag.Count)</li>
+    }
+</ul>
