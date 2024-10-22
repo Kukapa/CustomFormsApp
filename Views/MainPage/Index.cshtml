@@ -1,25 +1,63 @@
 ﻿@model CustomFormsApp.Models.MainPageViewModel
 
-<h2>Latest Templates</h2>
-<ul>
-    @foreach (var template in Model.LatestTemplates)
-    {
-        <li>@template.Title</li>
-    }
-</ul>
+<div class="container mt-5">
 
-<h2>Popular Templates</h2>
-<ul>
-    @foreach (var template in Model.PopularTemplates)
-    {
-        <li>@template.Title</li>
-    }
-</ul>
+    <h2 class="mb-4">Latest Templates</h2>
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Title</th>
+                    <th>Description</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var template in Model.LatestTemplates)
+                {
+                    <tr>
+                        <td>@template.Title</td>
+                        <td>@template.Description</td>
+                        <td>
+                            <a href="@Url.Action("Details", "Template", new { id = template.Id })" class="btn btn-primary">View</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
 
-<h2>Tag Cloud</h2>
-<ul>
-    @foreach (var tag in Model.TagCloud)
-    {
-        <li>@tag.Tag (@tag.Count)</li>
-    }
-</ul>
+    <h2 class="mt-5 mb-4">Popular Templates</h2>
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Title</th>
+                    <th>Description</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var template in Model.PopularTemplates)
+                {
+                    <tr>
+                        <td>@template.Title</td>
+                        <td>@template.Description</td>
+                        <td>
+                            <a href="@Url.Action("Details", "Template", new { id = template.Id })" class="btn btn-primary">View</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <h2 class="mt-5 mb-4">Tag Cloud</h2>
+    <div class="d-flex flex-wrap">
+        @foreach (var tag in Model.TagCloud)
+        {
+            <a href="@Url.Action("Search", "Template", new { tag = tag.Tag })" class="badge badge-info m-1" style="font-size:@(12 + tag.Count)px;">@tag.Tag (@tag.Count)</a>
+        }
+    </div>
+
+</div>
