@@ -34,15 +34,12 @@
         <input type="checkbox" asp-for="IsPublic" />
     </div>
     
-    <button type="submit">Create Template</button>
+    <button type="submit" class="btn btn-primary">Create Template</button>
 </form>
-
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
-}
 
-@section Scripts {
     <script>
         $(document).ready(function () {
             $('#tags').on('input', function () {

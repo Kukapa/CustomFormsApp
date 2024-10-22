@@ -30,6 +30,8 @@ namespace CustomFormsApp.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(TemplateModel model)
         {
+            model.CreatedDate = DateTime.UtcNow;
+
             if (!User.Identity.IsAuthenticated)
             {
                 return RedirectToAction("Login", "Account");
