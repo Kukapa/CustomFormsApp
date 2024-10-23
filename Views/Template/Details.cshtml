@@ -37,7 +37,17 @@
             <h4>Template Settings</h4>
             <p><strong>Description:</strong> @Model.Template.Description</p>
             <p><strong>Public:</strong> @(Model.Template.IsPublic ? "Yes" : "No")</p>
-            <p><strong>Tags:</strong> @Model.Template.Tags</p>
+            <p>
+                <strong>Tags:</strong>
+                @if (Model.Tags != null && Model.Tags.Any())
+                {
+                    @string.Join(", ", Model.Tags.Select(t => t.Name))
+                }
+                else
+                {
+                    <span>No tags</span>
+                }
+            </p>
             @if (Model.CanManageTemplate)
             {
                <a href="@Url.Action("Edit", "Template", new { id = Model.Template.Id })" class="btn btn-primary">Edit Template</a>

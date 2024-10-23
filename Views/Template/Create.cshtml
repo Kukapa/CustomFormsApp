@@ -16,9 +16,9 @@
     </div>
 
     <div class="form-group">
-        <label for="tags">Tags</label>
-        <input type="text" id="tags" name="Tags" class="form-control" placeholder="Add tags" />
-        <ul id="tag-suggestions" class="list-group" style="display:none;"></ul>
+        <label for="Tags">Tags</label>
+        <input type="text" class="form-control" id="Tags" name="tagNames" placeholder="Add tags"
+               value="@string.Join(", ", Model.Tags.Select(t => t.Name))" />
     </div>
 
     <div class="form-group">

@@ -22,7 +22,16 @@
             <tr>
                 <td>@template.Title</td>
                 <td>@template.Description</td>
-                <td>@template.Tags</td>
+                <td>
+                    @if (template.Tags != null && template.Tags.Any())
+                    {
+                        @string.Join(", ", template.Tags.Select(t => t.Name))
+                    }
+                    else
+                    {
+                        <span>No Tags</span>
+                    }
+                </td>
                 <td>@template.Topic</td>
                 <td>
                     <a asp-action="Details" asp-route-id="@template.Id" class="btn btn-info">Details</a>
