@@ -61,7 +61,7 @@ namespace CustomFormsApp.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Answers", (string)null);
+                    b.ToTable("Answers");
                 });
 
             modelBuilder.Entity("CustomFormsApp.Models.CommentModel", b =>
@@ -91,7 +91,7 @@ namespace CustomFormsApp.Migrations
 
                     b.HasIndex("TemplateId");
 
-                    b.ToTable("Comments", (string)null);
+                    b.ToTable("Comments");
                 });
 
             modelBuilder.Entity("CustomFormsApp.Models.FilledFormModel", b =>
@@ -118,7 +118,7 @@ namespace CustomFormsApp.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("FilledForms", (string)null);
+                    b.ToTable("FilledForms");
                 });
 
             modelBuilder.Entity("CustomFormsApp.Models.FormModel", b =>
@@ -152,7 +152,7 @@ namespace CustomFormsApp.Migrations
 
                     b.HasKey("FormId");
 
-                    b.ToTable("Forms", (string)null);
+                    b.ToTable("Forms");
                 });
 
             modelBuilder.Entity("CustomFormsApp.Models.LikeModel", b =>
@@ -174,7 +174,7 @@ namespace CustomFormsApp.Migrations
 
                     b.HasIndex("TemplateId");
 
-                    b.ToTable("Likes", (string)null);
+                    b.ToTable("Likes");
                 });
 
             modelBuilder.Entity("CustomFormsApp.Models.QuestionModel", b =>
@@ -206,7 +206,7 @@ namespace CustomFormsApp.Migrations
 
                     b.HasIndex("TemplateId");
 
-                    b.ToTable("Questions", (string)null);
+                    b.ToTable("Questions");
                 });
 
             modelBuilder.Entity("CustomFormsApp.Models.TagModel", b =>
@@ -223,7 +223,7 @@ namespace CustomFormsApp.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Tags", (string)null);
+                    b.ToTable("Tags");
                 });
 
             modelBuilder.Entity("CustomFormsApp.Models.TemplateModel", b =>
@@ -248,13 +248,6 @@ namespace CustomFormsApp.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int?>("TagModelId")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("Tags")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("text");
@@ -264,9 +257,7 @@ namespace CustomFormsApp.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("TagModelId");
-
-                    b.ToTable("Templates", (string)null);
+                    b.ToTable("Templates");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -465,6 +456,21 @@ namespace CustomFormsApp.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("TagModelTemplateModel", b =>
+                {
+                    b.Property<int>("TagsId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("TemplatesId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("TagsId", "TemplatesId");
+
+                    b.HasIndex("TemplatesId");
+
+                    b.ToTable("TagModelTemplateModel");
+                });
+
             modelBuilder.Entity("CustomFormsApp.Models.AnswerModel", b =>
                 {
                     b.HasOne("CustomFormsApp.Models.FilledFormModel", "FilledForm")
@@ -544,13 +550,6 @@ namespace CustomFormsApp.Migrations
                     b.Navigation("Template");
                 });
 
-            modelBuilder.Entity("CustomFormsApp.Models.TemplateModel", b =>
-                {
-                    b.HasOne("CustomFormsApp.Models.TagModel", null)
-                        .WithMany("Templates")
-                        .HasForeignKey("TagModelId");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -602,14 +601,24 @@ namespace CustomFormsApp.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("TagModelTemplateModel", b =>
+                {
+                    b.HasOne("CustomFormsApp.Models.TagModel", null)
+                        .WithMany()
+                        .HasForeignKey("TagsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("CustomFormsApp.Models.TemplateModel", null)
+                        .WithMany()
+                        .HasForeignKey("TemplatesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("CustomFormsApp.Models.FilledFormModel", b =>
                 {
                     b.Navigation("Answers");
-                });
-
-            modelBuilder.Entity("CustomFormsApp.Models.TagModel", b =>
-                {
-                    b.Navigation("Templates");
                 });
 
             modelBuilder.Entity("CustomFormsApp.Models.TemplateModel", b =>
