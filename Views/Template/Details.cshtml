@@ -55,7 +55,7 @@
                <a asp-action="AddQuestion" asp-route-templateId="@Model.Template.Id" class="btn btn-success">Add Question</a>
             }
            
-            @if (User.Identity.IsAuthenticated && !Model.CanManageTemplate)
+            @if (User.Identity.IsAuthenticated && !Model.CanManageTemplate && Model.Template.IsPublic)
             {
                 <a asp-action="Answer" asp-controller="Form" asp-route-templateId="@Model.Template.Id" class="btn btn-primary">Fill the Form</a>
             }
@@ -132,38 +132,55 @@
 
         <div class="tab-pane fade" id="results" role="tabpanel" aria-labelledby="results-tab">
             <h4>Results</h4>
-            <ul class="list-group mt-3">
-                @foreach (var filledForm in Model.FormResults)
-                {
-                    <li class="list-group-item">
-                        <h5>Submission ID: @filledForm.Id</h5>
+            @if (Model.Template.FilledForms != null && Model.Template.FilledForms.Any())
+            {
+                <ul class="list-group mt-3">
+                    @foreach (var filledForm in Model.FormResults)
+                    {
+                        <li class="list-group-item">
+                            <h5>Submission ID: @filledForm.Id</h5>
                         Submitted By: @filledForm.User.UserName
                         <br />
                         <a href="@Url.Action("ViewAnswers", "Template", new { filledFormId = filledForm.Id })" class="btn btn-primary mt-2">Check Answers</a>
                     </li>
                 }
-            </ul>
+                </ul>
+            }
+            else
+            {
+                <p>No results submitted.</p>
+            }
         </div>
 
         <div class="tab-pane fade" id="aggregated" role="tabpanel" aria-labelledby="aggregated-tab">
             <h4>Aggregated Results</h4>
-            <table class="table table-striped">
-                <thead>
-                    <tr>
-                        <th>Question</th>
-                        <th>Average Answer</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var question in Model.Template.Questions.Where(q => q.Type == CustomFormsApp.Models.QuestionType.PositiveInteger))
-                    {
+            @if (Model.Template.Questions.Where(q => q.Type == CustomFormsApp.Models.QuestionType.PositiveInteger).Any())
+            {
+                <table class="table table-striped">
+                    <thead>
                         <tr>
-                            <td>@question.Title</td>
-                            <td>@Model.Averages[question.Id]</td>
+                            <th>Question</th>
+                            <th>Average Answer</th>
                         </tr>
+                    </thead>
+                    @if (Model.Template.Questions.Where(q => q.Type == CustomFormsApp.Models.QuestionType.PositiveInteger) != null)
+                    {
+                    <tbody>
+                        @foreach (var question in Model.Template.Questions.Where(q => q.Type == CustomFormsApp.Models.QuestionType.PositiveInteger))
+                        {
+                            <tr>
+                                <td>@question.Title</td>
+                                <td>@Model.Averages[question.Id]</td>
+                            </tr>
+                        }
+                    </tbody>
                     }
-                </tbody>
-            </table>
+                </table>
+            }
+            else
+            {
+                <p>No results available.</p>
+            }
         </div>
     </div>
 </div>

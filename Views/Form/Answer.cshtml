@@ -2,30 +2,39 @@
 
 <h2>Answer the Questions</h2>
 
-<form asp-action="SubmitAnswers" method="post">
-    @foreach (var question in Model)
-    {
-        <div class="form-group">
-            <label>@question.Title</label>
-            <input type="hidden" name="QuestionIds" value="@question.Id" />
+@if (Model != null && Model.Count > 0)
+{
+    <form asp-action="SubmitAnswers" method="post">
+        @foreach (var question in Model)
+        {
+            <div class="form-group">
+                <label>@question.Title</label>
+                <input type="hidden" name="QuestionIds" value="@question.Id" />
 
-            @if (question.Type == QuestionType.SingleLineString)
-            {
-                <input type="text" name="Answers[@question.Id]" class="form-control" />
-            }
-            else if (question.Type == QuestionType.MultiLineText)
-            {
-                <textarea name="Answers[@question.Id]" class="form-control"></textarea>
-            }
-            else if (question.Type == QuestionType.PositiveInteger)
-            {
-                <input type="number" name="Answers[@question.Id]" class="form-control" />
-            }
-            else if (question.Type == QuestionType.Checkbox)
-            {
-                <input type="checkbox" name="Answers[@question.Id]" value="true" class="form-check-input" />
-            }
-        </div>
-    }
-    <button type="submit" class="btn btn-primary">Submit Answers</button>
-</form>
+                @if (question.Type == QuestionType.SingleLineString)
+                {
+                    <input type="text" name="Answers[@question.Id]" class="form-control" />
+                }
+                else if (question.Type == QuestionType.MultiLineText)
+                {
+                    <textarea name="Answers[@question.Id]" class="form-control"></textarea>
+                }
+                else if (question.Type == QuestionType.PositiveInteger)
+                {
+                    <input type="number" name="Answers[@question.Id]" class="form-control" />
+                }
+                else if (question.Type == QuestionType.Checkbox)
+                {
+                    <input type="checkbox" name="Answers[@question.Id]" value="true" class="form-check-input" />
+                }
+            </div>
+        }
+        <button type="submit" class="btn btn-primary">Submit Answers</button>
+    </form>
+}
+else
+{
+    <div class="alert alert-info">There are no questions in this template.</div>
+}
+
+<a href="@Url.Action("Index", "Template")" class="btn btn-secondary">Back to Template</a>

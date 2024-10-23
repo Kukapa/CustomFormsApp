@@ -25,11 +25,12 @@
                                 <input class="form-control form-control-sm me-2 search-input" type="search" name="query" placeholder="Search" aria-label="Search">
                                 <button class="btn btn-outline-success btn-sm search-button" type="submit">Search</button>
                             </form>
-
+                        }
                             <li class="nav-item">
                                 <a class="nav-link" href="/Template/Index">Templates</a>
                             </li>
-
+                        @if (User.Identity.IsAuthenticated)
+                        {
                             @if (User.IsInRole("Admin"))
                             {
                                 <li class="nav-item">

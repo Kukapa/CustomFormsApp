@@ -1,4 +1,6 @@
 ﻿@model CustomFormsApp.Models.MainPageViewModel
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<IdentityUser> UserManager
 
 <div class="container mt-5">
 
@@ -9,19 +11,32 @@
                 <tr>
                     <th>Title</th>
                     <th>Description</th>
-                    <th>Actions</th>
+                    <th>Topic</th>
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <th>Actions</th>
+                    }
                 </tr>
             </thead>
             <tbody>
                 @foreach (var template in Model.LatestTemplates)
                 {
-                    <tr>
-                        <td>@template.Title</td>
-                        <td>@template.Description</td>
-                        <td>
-                            <a href="@Url.Action("Details", "Template", new { id = template.Id })" class="btn btn-primary">View</a>
-                        </td>
-                    </tr>
+                    var currentUserId = UserManager.GetUserId(User);
+
+                    if (template.IsPublic || User.IsInRole("Admin") || template.OwnerUserId == currentUserId)
+                    {
+                        <tr>
+                            <td>@template.Title</td>
+                            <td>@template.Description</td>
+                            <td>@template.Topic</td>
+                            @if (User.Identity.IsAuthenticated)
+                            {
+                                <td>
+                                    <a href="@Url.Action("Details", "Template", new { id = template.Id })" class="btn btn-primary">View</a>
+                                </td>
+                            }
+                        </tr>
+                    }
                 }
             </tbody>
         </table>
@@ -34,19 +49,32 @@
                 <tr>
                     <th>Title</th>
                     <th>Description</th>
-                    <th>Actions</th>
+                    <th>Topic</th>
+                    @if (User.Identity.IsAuthenticated)
+                        {
+                            <th>Actions</th>
+                        }
                 </tr>
             </thead>
             <tbody>
                 @foreach (var template in Model.PopularTemplates)
                 {
-                    <tr>
-                        <td>@template.Title</td>
-                        <td>@template.Description</td>
-                        <td>
-                            <a href="@Url.Action("Details", "Template", new { id = template.Id })" class="btn btn-primary">View</a>
-                        </td>
-                    </tr>
+                    var currentUserId = UserManager.GetUserId(User);
+
+                    if (template.IsPublic || User.IsInRole("Admin") || template.OwnerUserId == currentUserId)
+                    {
+                        <tr>
+                            <td>@template.Title</td>
+                            <td>@template.Description</td>
+                            <td>@template.Topic</td>
+                            @if (User.Identity.IsAuthenticated)
+                            {
+                                <td>
+                                    <a href="@Url.Action("Details", "Template", new { id = template.Id })" class="btn btn-primary">View</a>
+                                </td>
+                            }
+                        </tr>
+                    }
                 }
             </tbody>
         </table>

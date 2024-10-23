@@ -16,12 +16,17 @@
             <th>Description</th>
             <th>Tags</th>
             <th>Topic</th>
-            <th>Actions</th>
+            @if (User.Identity.IsAuthenticated)
+            {
+                <th>Actions</th>
+            }
         </tr>
     </thead>
     <tbody>
         @foreach (var template in Model)
         {
+            if (template.IsPublic || User.IsInRole("Admin") || template.OwnerUserId == UserManager.GetUserId(User))
+            {     
             <tr>
                 <td>@template.Title</td>
                 <td>@template.Description</td>
@@ -37,9 +42,10 @@
                 </td>
                 <td>@template.Topic</td>
                 <td>
-                    <a asp-action="Details" asp-route-id="@template.Id" class="btn btn-info">Details</a>
                     @if (User.Identity.IsAuthenticated)
                     {
+                        <a asp-action="Details" asp-route-id="@template.Id" class="btn btn-info">View</a>
+                    
                         var currentUserId = UserManager.GetUserId(User);
 
                         @if (User.IsInRole("Admin") || template.OwnerUserId == currentUserId)
@@ -53,6 +59,7 @@
                     }
                 </td>
             </tr>
+            }
         }
     </tbody>
 </table>
