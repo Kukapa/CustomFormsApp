@@ -52,7 +52,7 @@ namespace CustomFormsApp.Controllers
                     await _userManager.AddToRoleAsync(user, "User");
 
                     await _signInManager.SignInAsync(user, isPersistent: false);
-                    return RedirectToAction("Index", "Home");
+                    return RedirectToAction("Index", "MainPage");
                 }
 
                 foreach (var error in result.Errors)
@@ -87,7 +87,7 @@ namespace CustomFormsApp.Controllers
 
             if (result.Succeeded)
             {
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("Index", "MainPage");
             }
             else
             {
