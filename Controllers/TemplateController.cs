@@ -24,11 +24,15 @@ namespace CustomFormsApp.Controllers
         [HttpGet]
         public IActionResult Create()
         {
-            return View();
+            var model = new TemplateModel
+            {
+                Tags = new List<TagModel>()
+            };
+            return View(model);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(TemplateModel model)
+        public async Task<IActionResult> Create(TemplateModel model, string tagNames)
         {
             model.CreatedDate = DateTime.UtcNow;
 
@@ -38,23 +42,33 @@ namespace CustomFormsApp.Controllers
             }
 
             var currentUserId = _userManager.GetUserId(User);
-
             model.OwnerUserId = currentUserId;
 
             ModelState.Remove("OwnerUserId");
 
             if (!ModelState.IsValid)
             {
+                model.Tags = model.Tags ?? new List<TagModel>();
                 return View(model);
             }
 
             try
             {
+                if (!string.IsNullOrWhiteSpace(tagNames))
+                {
+                    var tagList = tagNames.Split(',')
+                        .Select(t => new TagModel { Name = t.Trim() })
+                        .ToList();
+                    model.Tags.AddRange(tagList);
+                }
+
                 await _context.Templates.AddAsync(model);
                 await _context.SaveChangesAsync();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Console.WriteLine(ex.Message);
+
                 ModelState.AddModelError(string.Empty, "An error occurred while creating the template.");
                 return View(model);
             }
@@ -64,9 +78,12 @@ namespace CustomFormsApp.Controllers
 
         [Authorize(Roles = "Admin, User")]
         [HttpGet]
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            var templates = _context.Templates.Include(t => t.Questions).ToList();
+            var templates = await _context.Templates
+                .Include(t => t.Questions)
+                .Include(t => t.Tags)
+                .ToListAsync();
 
             return View(templates);
         }
@@ -98,7 +115,7 @@ namespace CustomFormsApp.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, TemplateModel templateModel)
+        public async Task<IActionResult> Edit(int id, TemplateModel templateModel, string[] tagNames)
         {
             if (id != templateModel.Id)
             {
@@ -106,7 +123,8 @@ namespace CustomFormsApp.Controllers
             }
 
             var existingTemplate = await _context.Templates
-                                                 .FirstOrDefaultAsync(t => t.Id == id);
+                .Include(t => t.Tags)
+                .FirstOrDefaultAsync(t => t.Id == id);
 
             if (existingTemplate == null)
             {
@@ -116,8 +134,26 @@ namespace CustomFormsApp.Controllers
             existingTemplate.Title = templateModel.Title;
             existingTemplate.Description = templateModel.Description;
             existingTemplate.IsPublic = templateModel.IsPublic;
-            existingTemplate.Tags = templateModel.Tags;
             existingTemplate.Topic = templateModel.Topic;
+            existingTemplate.Tags.Clear();
+
+            if (tagNames != null && tagNames.Length > 0)
+            {
+                foreach (var tagName in tagNames)
+                {
+                    var existingTag = await _context.Tags.FirstOrDefaultAsync(t => t.Name == tagName);
+                    if (existingTag != null)
+                    {
+                        existingTemplate.Tags.Add(existingTag);
+                    }
+                    else
+                    {
+                        var newTag = new TagModel { Name = tagName };
+                        existingTemplate.Tags.Add(newTag);
+                        _context.Tags.Add(newTag); 
+                    }
+                }
+            }
 
             ModelState.Remove("OwnerUserId");
 
@@ -174,6 +210,7 @@ namespace CustomFormsApp.Controllers
                 .ThenInclude(ff => ff.User)
                 .Include(t => t.Comments)
                 .Include(t => t.Likes)
+                .Include(t => t.Tags)
                 .FirstOrDefaultAsync(t => t.Id == id);
 
             if (template == null)
@@ -208,7 +245,8 @@ namespace CustomFormsApp.Controllers
                 CanManageTemplate = canManageTemplate,
                 IsAdmin = isAdmin,
                 Averages = averages,
-                HasUserLiked = hasUserLiked
+                HasUserLiked = hasUserLiked,
+                Tags = template.Tags
             };
 
             return View(viewModel);
@@ -344,18 +382,6 @@ namespace CustomFormsApp.Controllers
             };
 
             return View(viewModel);
-        }
-
-        [HttpGet]
-        public IActionResult GetTags(string searchTerm)
-        {
-            var tags = _context.Templates
-                .Select(t => t.Tags)
-                .Where(t => t.Contains(searchTerm))
-                .Distinct()
-                .ToList();
-
-            return Json(tags);
         }
 
         [HttpPost]

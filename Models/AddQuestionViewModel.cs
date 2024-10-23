@@ -4,7 +4,7 @@ namespace CustomFormsApp.Models
 {
     public class AddQuestionViewModel
     {
-        public int TemplateId { get; set; } // The ID of the template
+        public int TemplateId { get; set; }
 
         [Required]
         public string Title { get; set; }
