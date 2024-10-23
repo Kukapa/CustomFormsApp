@@ -4,7 +4,10 @@
 
 <h2>Templates</h2>
 
-<a asp-action="Create" class="btn btn-primary">Create New Template</a>
+@if (User.Identity.IsAuthenticated)
+{
+    <a asp-action="Create" class="btn btn-primary">Create New Template</a>
+}
 
 <table class="table">
     <thead>

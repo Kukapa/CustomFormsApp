@@ -4,11 +4,9 @@ using Microsoft.AspNetCore.Authorization;
 using CustomFormsApp.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using System.Security.Claims;
 
 namespace CustomFormsApp.Controllers
 {
-    [Authorize]
     public class TemplateController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -76,7 +74,6 @@ namespace CustomFormsApp.Controllers
             return RedirectToAction("Index");
         }
 
-        [Authorize(Roles = "Admin, User")]
         [HttpGet]
         public async Task<IActionResult> Index()
         {
