@@ -17,6 +17,7 @@ namespace CustomFormsApp.Controllers
         {
             return View();
         }
+
         [HttpGet]
         public async Task<IActionResult> Results(string query)
         {
@@ -28,7 +29,8 @@ namespace CustomFormsApp.Controllers
             var templates = await _context.Templates
                 .Where(t => t.Title.Contains(query) || t.Description.Contains(query) ||
                             t.Questions.Any(q => q.Title.Contains(query)) || 
-                            t.Comments.Any(c => c.Content.Contains(query)))
+                            t.Comments.Any(c => c.Content.Contains(query)) ||
+                            t.Tags.Any(t => t.Name.Contains(query)))
                 .Include(t => t.Questions)
                 .ToListAsync();
 

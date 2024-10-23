@@ -17,7 +17,7 @@
 
     <div class="form-group">
         <label for="Tags">Tags</label>
-        <input type="text" class="form-control" id="Tags" name="tagNames" placeholder="Add tags"
+        <input type="text" class="form-control" id="Tags" name="tagNames" placeholder="Tags"
                value="@string.Join(", ", Model.Tags.Select(t => t.Name))" />
     </div>
 
@@ -39,36 +39,4 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
-
-    <script>
-        $(document).ready(function () {
-            $('#tags').on('input', function () {
-                var query = $(this).val();
-                if (query.length > 0) {
-                    $.ajax({
-                        url: '@Url.Action("GetTags", "Template")',
-                        type: 'GET',
-                        data: { searchTerm: query },
-                        success: function (data) {
-                            $('#tag-suggestions').empty().show();
-                            $.each(data, function (index, tag) {
-                                $('#tag-suggestions').append('<li class="list-group-item">' + tag + '</li>');
-                            });
-                        },
-                        error: function () {
-                            $('#tag-suggestions').hide();
-                        }
-                    });
-                } else {
-                    $('#tag-suggestions').hide();
-                }
-            });
-
-            $(document).on('click', '.list-group-item', function () {
-                var tag = $(this).text();
-                $('#tags').val(tag);
-                $('#tag-suggestions').hide();
-            });
-        });
-    </script>
 }
