@@ -13,8 +13,7 @@ namespace CustomFormsApp.Models
         [Required(ErrorMessage = "Description is required.")]
         public string Description { get; set; }
 
-        [Required(ErrorMessage = "Tags are required")]
-        public string Tags { get; set; }
+        public List<TagModel> Tags { get; set; } = new List<TagModel>();
 
         [Required(ErrorMessage = "Topic is required.")]
         public Topic Topic { get; set; }
