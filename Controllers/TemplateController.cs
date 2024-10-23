@@ -97,8 +97,11 @@ namespace CustomFormsApp.Controllers
         [HttpGet]
         public IActionResult Edit(int id)
         {
-            var template = _context.Templates.Include(t => t.Questions)
-                                             .FirstOrDefault(t => t.Id == id);
+            var template = _context.Templates
+                .Include(t => t.Questions)
+                .Include(t => t.Tags)
+                .FirstOrDefault(t => t.Id == id);
+
             if (template == null)
             {
                 return NotFound();
@@ -135,7 +138,7 @@ namespace CustomFormsApp.Controllers
             existingTemplate.Description = templateModel.Description;
             existingTemplate.IsPublic = templateModel.IsPublic;
             existingTemplate.Topic = templateModel.Topic;
-            existingTemplate.Tags.Clear();
+            existingTemplate.Tags = templateModel.Tags;
 
             if (tagNames != null && tagNames.Length > 0)
             {
