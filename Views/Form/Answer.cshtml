@@ -4,7 +4,7 @@
 
 <h5>To submit the form, you need to answer all the questions</h5>
 
-@if (Model != null && Model.Count > 0)
+@if (Model != null && Model.Count > 0) 
 {
     <form asp-action="SubmitAnswers" method="post">
         @foreach (var question in Model)

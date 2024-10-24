@@ -154,7 +154,7 @@ namespace CustomFormsApp.Controllers
                 {
                     var questions = await _context.Questions
                         .Where(q => q.TemplateId == filledForm.TemplateId)
-                        .ToListAsync();
+                        .ToListAsync(); 
 
                     return View("Answer", questions);
                 }
