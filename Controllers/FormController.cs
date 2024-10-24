@@ -150,6 +150,15 @@ namespace CustomFormsApp.Controllers
                     answer.AnswerBoolean = Answers.ContainsKey(questionId) && Answers[questionId] == "true";
                 }
 
+                if (string.IsNullOrEmpty(answer.AnswerText) && answer.AnswerInteger == null && answer.AnswerBoolean == null)
+                {
+                    var questions = await _context.Questions
+                        .Where(q => q.TemplateId == filledForm.TemplateId)
+                        .ToListAsync();
+
+                    return View("Answer", questions);
+                }
+
                 filledForm.Answers.Add(answer);
             }
 
