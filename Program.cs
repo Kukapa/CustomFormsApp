@@ -1,4 +1,5 @@
 using CustomFormsApp.Data;
+using CustomFormsApp.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Npgsql.EntityFrameworkCore.PostgreSQL;
@@ -13,6 +14,8 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>()
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();
+
+builder.Services.AddScoped<SalesforceService>();
 
 builder.Services.Configure<IdentityOptions>(options =>
 {

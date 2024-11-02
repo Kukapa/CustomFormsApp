@@ -5,6 +5,7 @@ using CustomFormsApp.Models;
 using Microsoft.AspNetCore.Authorization;
 using CustomFormsApp.Data;
 using Microsoft.EntityFrameworkCore;
+using CustomFormsApp.Services;
 
 namespace CustomFormsApp.Controllers
 {
@@ -15,12 +16,15 @@ namespace CustomFormsApp.Controllers
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly ApplicationDbContext _context;
 
-        public AccountController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, RoleManager<IdentityRole> roleManager, ApplicationDbContext context)
+        private readonly SalesforceService _salesforceService;
+
+        public AccountController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, RoleManager<IdentityRole> roleManager, ApplicationDbContext context, SalesforceService salesforceService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _roleManager = roleManager;
             _context = context;
+            _salesforceService = salesforceService;
         }
 
         [AllowAnonymous]
@@ -129,6 +133,24 @@ namespace CustomFormsApp.Controllers
             };
 
             return View(viewModel);
+        }
+
+        [HttpGet]
+        public IActionResult CreateAccountAndContact()
+        {
+            return View(new CreateAccountViewModel());
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateAccountAndContact(CreateAccountViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                await _salesforceService.CreateAccountAndContactAsync(model.AccountName, model.ContactFirstName, model.ContactLastName, model.ContactEmail);
+                return RedirectToAction("Profile");
+            }
+
+            return View(model);
         }
     }
 }
