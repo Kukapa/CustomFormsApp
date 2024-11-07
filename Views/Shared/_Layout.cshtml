@@ -65,8 +65,12 @@
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
-    </div>
 
+        <a href="@Url.Action("CreateTicket", "Support")" class="floating-button" title="Create Support Ticket">
+            &#x2709;
+        </a>
+    </div>
+ 
     <footer class="border-top footer text-muted">
         <div class="container">
             &copy; 2024 - FormsOnline - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>

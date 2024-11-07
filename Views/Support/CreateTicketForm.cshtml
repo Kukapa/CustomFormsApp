@@ -1,0 +1,25 @@
+﻿@{
+    ViewData["Title"] = "Create Ticket";
+}
+
+<h2>Create Ticket</h2>
+
+<form asp-action="CreateTicket" method="post">
+    <div class="form-group">
+        <label for="summary">Summary</label>
+        <input type="text" class="form-control" id="summary" name="summary" required />
+    </div>
+    <div class="form-group">
+        <label for="description">Description</label>
+        <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
+    </div>
+    <div class="form-group">
+        <label for="priority">Priority</label>
+        <select class="form-control" id="priority" name="priority" required>
+            <option value="High">High</option>
+            <option value="Average">Average</option>
+            <option value="Low">Low</option>
+        </select>
+    </div>
+    <button type="submit" class="btn btn-primary">Create Ticket</button>
+</form>

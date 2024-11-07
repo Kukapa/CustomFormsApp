@@ -16,6 +16,7 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>()
     .AddDefaultTokenProviders();
 
 builder.Services.AddScoped<SalesforceService>();
+builder.Services.AddSingleton<JiraService>();
 
 builder.Services.Configure<IdentityOptions>(options =>
 {
